@@ -1,0 +1,8 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CLASSES_ROOT\*\shell\PianoTrans]
+@="Piano Transcribe"
+"AppliesTo"=".flac OR .m4a OR .mp3 OR .mp4 OR .wav"
+
+[HKEY_CLASSES_ROOT\*\shell\PianoTrans\command]
+@="\"@REPLACE@PianoTrans.exe\" \"%1\""
