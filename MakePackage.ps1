@@ -5,31 +5,33 @@ function MakeDir {
     }
 }
 
-function Registry {
-    param($Path,$Name,$Value,$Type)
-    $Json = (ConvertTo-Json $Value)
-    $command = ""
-    if (-not (Test-Path $Path)) {
-        $command = "New-Item `"$Path`" -Force | New-ItemProperty -Name `"$Name`" -PropertyType $Type -Force -Value "
-    } elseif (-not ((ConvertTo-Json (Get-ItemProperty $Path | Select-Object -ExpandProperty $Name -ErrorAction Ignore)) -eq $Json)) {
-        $command = "Set-ItemProperty `"$Path`" -Name `"$Name`" -Type $Type -Force -Value "
-    }
-    if (-not ($command -eq "")) {
-        Write-Host "Registry: $Path!$Name -> $Value"
-        if ($Type -eq "String") {
-            $command += "`"$Value`""
-        } else {
-            $command += "(ConvertFrom-Json `"$Json`")"
+function DownloadUrl {  
+    param($Url,$File)
+    $WebClient = New-Object System.Net.WebClient
+    try {
+        $Task = $WebClient.DownloadFileTaskAsync($Url, "$PSScriptRoot\$File")
+        Register-ObjectEvent -InputObject $WebClient -EventName DownloadProgressChanged -SourceIdentifier WebClient.DownloadProgressChanged | Out-Null
+        Start-Sleep -Seconds 1
+        While (-Not $Task.IsCompleted) {
+            Start-Sleep -Seconds 1
+            $EventData = Get-Event -SourceIdentifier WebClient.DownloadProgressChanged | Select-Object -ExpandProperty "SourceEventArgs" -Last 1
+            $TotalPercent = $EventData | Select-Object -ExpandProperty "ProgressPercentage"
+            Write-Progress -Activity "Downloading $File from $Url" -Status "Percent Complete: $($TotalPercent)%" -PercentComplete $TotalPercent
         }
-        RunAsAdmin $command
     }
-}
-
-function RunAsAdmin {
-    param($Command)
-    $bytes = [System.Text.Encoding]::Unicode.GetBytes($Command)
-    $encodedCommand = [Convert]::ToBase64String($bytes)
-    Start-Process powershell -Verb runAs -ArgumentList "-EncodedCommand $encodedCommand"
+    catch [System.Net.WebException] {
+        Write-Host("Cannot download $Url")
+        if ($_.Exception.InnerException) {
+            Write-Error $_.Exception.InnerException.Message
+        } else {
+            Write-Error $_.Exception.Message
+        }
+    }
+    finally {
+        Write-Progress -Activity "Downloading $File from $Url" -Completed
+        Unregister-Event -SourceIdentifier WebClient.DownloadProgressChanged
+        $WebClient.Dispose()
+    }
 }
 
 function UnpackUrl {
@@ -45,7 +47,7 @@ function UnpackUrl {
         Write-Host "UnpackUrl: $Url -> $UnpackDir"
         if (-not (Test-Path $Output)) {
             Import-Module BitsTransfer
-            Start-BitsTransfer -Description "Downloading $File from $Url" -Source $Url -Destination $Output
+            DownloadUrl -Url $Url -File $Output
         }
         switch ((Get-Item $Output).Extension) {
             '.zip' {
@@ -58,9 +60,6 @@ function UnpackUrl {
         }
     }
 }
-
-# disable bits branchcache https://powershell.org/forums/topic/bits-transfer-with-github/
-Registry -Path HKLM:\SOFTWARE\Policies\Microsoft\Windows\BITS -Name DisableBranchCache -Value 1 -Type DWord
 
 MakeDir build\
 MakeDir dist\downloads\
