@@ -13,7 +13,7 @@ This is a simple GUI and packaging for Windows.
 ### Requirement
 
 * OS: Windows 7 or later (64-bit)
-* Memory: at least 8G
+* Memory: at least 4G
 
 Only Windows 10 is tested.
 
@@ -26,7 +26,7 @@ If you use other OS, follow those [install and usage][2] guides instead.
 
 1. Download [Microsoft Visual C++ Redistributable for Visual Studio 2015, 2017 and 2019][3] `vc_redist_x64.exe` and install
 2. Download and unpack [PianoTrans.zip][4]
-3. Close other apps to free memory, need at least 4G free memory
+3. Close other apps to free memory, need at least 2G free memory
 4. Run `PianoTrans.exe` in `PianoTrans` directory
 5. Choose audio files, multiple selection is supported
 6. Result MIDI files are in the same directory as the audio files
