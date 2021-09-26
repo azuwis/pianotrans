@@ -5,7 +5,7 @@ function MakeDir {
     }
 }
 
-function DownloadUrl {  
+function DownloadUrl {
     param($Url,$File)
     $WebClient = New-Object System.Net.WebClient
     try {
@@ -74,16 +74,23 @@ $Python="build\python\scripts\python.bat"
 $ScriptsDir="build\python\python-3.7.7.amd64\Scripts"
 $LibsDir="build\python\python-3.7.7.amd64\Lib\site-packages"
 
+MakeDir build\pip\
+$PipCacheDir=Resolve-Path build\pip\ | select -ExpandProperty Path
+
+MakeDir build\temp\
+$TempDir=Resolve-Path build\temp\ | select -ExpandProperty Path
+$env:TEMP=$TempDir
+
 if (-not (Test-Path $LibsDir\torch)) {
-    & $Python -m pip install torch==1.4.0 -f https://download.pytorch.org/whl/torch_stable.html
+    & $Python -m pip --cache-dir "$PipCacheDir" install torch -f https://download.pytorch.org/whl/torch_stable.html
 }
 
 if (-not (Test-Path $LibsDir\piano_transcription_inference)) {
-    & $Python -m pip install piano_transcription_inference
+    & $Python -m pip --cache-dir "$PipCacheDir" install numpy==1.20.0 piano_transcription_inference
 }
 
 if (-not (Test-Path $ScriptsDir\pyinstaller.exe)) {
-    & $Python -m pip install pyinstaller
+    & $Python -m pip --cache-dir "$PipCacheDir" install pyinstaller
 }
 
 & $Python -m pip freeze | Out-File -encoding UTF8 pip.txt
