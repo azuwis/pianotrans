@@ -123,7 +123,7 @@ if (Test-Path build\$ffmpeg_version\) {
 
 MakeDir build\dist\PianoTrans\reg\
 cp README.md build\dist\PianoTrans\README.txt
-cp RightClickMenuRegister.bat, RightClickMenuUnregister.bat build\dist\PianoTrans\
+cp PianoTrans-CPU.bat, RightClickMenuRegister.bat, RightClickMenuUnregister.bat build\dist\PianoTrans\
 cp RightClickMenuRegister.reg.in, RightClickMenuUnregister.reg build\dist\PianoTrans\reg\
 
 if (-not (Test-Path dist\PianoTrans.zip)) {
