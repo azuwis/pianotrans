@@ -35,7 +35,7 @@ function DownloadUrl {
 }
 
 function UnpackUrl {
-    param($Url,$File,$UnpackDir,$TestPath)
+    param($Url,$File,$UnpackDir,$TestPath,$ArgumentList)
     if (-not $File) {
         $File = $Url.Substring($Url.LastIndexOf("/") + 1)
     }
@@ -46,7 +46,6 @@ function UnpackUrl {
     if (-not (Test-Path "$TestPath")) {
         Write-Host "UnpackUrl: $Url -> $UnpackDir"
         if (-not (Test-Path $Output)) {
-            Import-Module BitsTransfer
             DownloadUrl -Url $Url -File $Output
         }
         switch ((Get-Item $Output).Extension) {
@@ -55,7 +54,7 @@ function UnpackUrl {
                 $shell.Namespace([IO.Path]::Combine($pwd, $UnpackDir)).CopyHere($shell.Namespace([IO.Path]::Combine($pwd, $Output)).Items())
             }
             '.exe' {
-                Start-Process $output -Wait -ArgumentList "-y -o$UnpackDir"
+                Start-Process $output -Wait -ArgumentList $ArgumentList
             }
         }
     }
@@ -65,7 +64,7 @@ MakeDir build\
 MakeDir dist\downloads\
 
 UnpackUrl -Url https://github.com/winpython/winpython/releases/download/2.3.20200530/Winpython64-3.7.7.1dot.exe `
-    -UnpackDir build\ -TestPath build\python\
+    -ArgumentList "-y -obuild\" -TestPath build\python\
 if (-not (Test-Path build\python\)) {
     mv build\WPy64-3771\ build\python\
 }
