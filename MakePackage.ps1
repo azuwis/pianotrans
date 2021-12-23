@@ -63,6 +63,9 @@ function UnpackUrl {
 MakeDir build\
 MakeDir dist\downloads\
 
+$7zDir = [IO.Path]::Combine($pwd, "build\7z")
+UnpackUrl -Url https://www.7-zip.org/a/7z2106-x64.exe -ArgumentList "/S /D=$7zDir" -TestPath $7zDir
+
 UnpackUrl -Url https://github.com/winpython/winpython/releases/download/2.3.20200530/Winpython64-3.7.7.1dot.exe `
     -ArgumentList "-y -obuild\" -TestPath build\python\
 if (-not (Test-Path build\python\)) {
@@ -94,7 +97,8 @@ if (-not (Test-Path $ScriptsDir\pyinstaller.exe)) {
 
 & $Python -m pip freeze | Out-File -encoding UTF8 pip.txt
 
-if (-not (Test-Path build\dist\PianoTrans\)) {
+$Version="v0.2.1"
+if (-not (Test-Path build\dist\PianoTrans-$Version\)) {
     cp PianoTrans.py, PianoTrans.spec build\
     & $Python $ScriptsDir\pyinstaller.exe `
     --noconfirm `
@@ -102,32 +106,34 @@ if (-not (Test-Path build\dist\PianoTrans\)) {
     --workpath build\build\ `
     --specpath build\ `
     build\PianoTrans.spec
+    mv build\dist\PianoTrans build\dist\PianoTrans-$Version
 }
 
-MakeDir build\dist\PianoTrans\piano_transcription_inference_data\
+MakeDir build\dist\PianoTrans-$Version\piano_transcription_inference_data\
 UnpackUrl -Url 'https://zenodo.org/record/4034264/files/CRNN_note_F1%3D0.9677_pedal_F1%3D0.9186.pth?download=1' `
     -File 'note_F1=0.9677_pedal_F1=0.9186.pth' -TestPath 'dist\downloads\note_F1=0.9677_pedal_F1=0.9186.pth'
-if (-not (Test-Path 'build\dist\PianoTrans\piano_transcription_inference_data\note_F1=0.9677_pedal_F1=0.9186.pth')) {
-    cp dist\downloads\note_F1=0.9677_pedal_F1=0.9186.pth 'build\dist\PianoTrans\piano_transcription_inference_data\note_F1=0.9677_pedal_F1=0.9186.pth'
+if (-not (Test-Path "build\dist\PianoTrans-$Version\piano_transcription_inference_data\note_F1=0.9677_pedal_F1=0.9186.pth")) {
+    cp dist\downloads\note_F1=0.9677_pedal_F1=0.9186.pth "build\dist\PianoTrans-$Version\piano_transcription_inference_data\note_F1=0.9677_pedal_F1=0.9186.pth"
 }
 
 $ffmpeg_version='ffmpeg-n4.3.1-30-g666d2fc6e2-win64-gpl-4.3'
-MakeDir build\dist\PianoTrans\ffmpeg\
+MakeDir build\dist\PianoTrans-$Version\ffmpeg\
 UnpackUrl -Url https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2021-02-01-12-44/$ffmpeg_version.zip `
-    -UnpackDir build\ -TestPath build\dist\PianoTrans\ffmpeg\ffmpeg.exe
+    -UnpackDir build\ -TestPath build\dist\PianoTrans-$Version\ffmpeg\ffmpeg.exe
 if (Test-Path build\$ffmpeg_version\) {
-    mv build\$ffmpeg_version\bin\ffmpeg.exe build\dist\PianoTrans\ffmpeg\
+    mv build\$ffmpeg_version\bin\ffmpeg.exe build\dist\PianoTrans-$Version\ffmpeg\
     rm -r build\$ffmpeg_version\
 }
 
-MakeDir build\dist\PianoTrans\reg\
-cp README.md build\dist\PianoTrans\README.txt
-cp PianoTrans-CPU.bat, RightClickMenuRegister.bat, RightClickMenuUnregister.bat build\dist\PianoTrans\
-cp RightClickMenuRegister.reg.in, RightClickMenuUnregister.reg build\dist\PianoTrans\reg\
+MakeDir build\dist\PianoTrans-$Version\reg\
+cp README.md build\dist\PianoTrans-$Version\README.txt
+cp PianoTrans-CPU.bat, RightClickMenuRegister.bat, RightClickMenuUnregister.bat build\dist\PianoTrans-$Version\
+cp RightClickMenuRegister.reg.in, RightClickMenuUnregister.reg build\dist\PianoTrans-$Version\reg\
 
-if (-not (Test-Path dist\PianoTrans.zip)) {
-    Add-Type -assembly "system.io.compression.filesystem"
-    [IO.Compression.ZipFile]::CreateFromDirectory([IO.Path]::Combine($pwd, "build\dist\"), [IO.Path]::Combine($pwd, "dist\PianoTrans.zip"))
+if (-not (Test-Path dist\PianoTrans-$Version.7z)) {
+    cd build\dist
+    & $7zDir\7z.exe a ..\..\dist\PianoTrans-$Version.7z PianoTrans-$Version
+    cd ..\..
 }
 
 Write-Host
