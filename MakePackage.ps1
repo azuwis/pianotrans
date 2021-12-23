@@ -73,8 +73,8 @@ $Python="build\python\scripts\python.bat"
 $ScriptsDir="build\python\python-3.7.7.amd64\Scripts"
 $LibsDir="build\python\python-3.7.7.amd64\Lib\site-packages"
 
-MakeDir build\pip\
-$PipCacheDir=Resolve-Path build\pip\ | select -ExpandProperty Path
+MakeDir dist\downloads\pip\
+$PipCacheDir=Resolve-Path dist\downloads\pip\ | select -ExpandProperty Path
 
 MakeDir build\temp\
 $TempDir=Resolve-Path build\temp\ | select -ExpandProperty Path
