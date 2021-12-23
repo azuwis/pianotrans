@@ -47,6 +47,11 @@ PianoTrans automatically uses GPU for inference, if you encounter any problem, y
 
 ### Changelog
 
+#### [0.2.1] - 2021-12-23
+
+* Update pytorch to 1.10.1.
+* Update piano-transcription-inference to 0.0.5
+
 #### [0.2] - 2021-09-27
 
 * Update pytorch to 1.9.1.
