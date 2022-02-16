@@ -42,6 +42,7 @@
           (python39.withPackages(ps: [
             ps.piano-transcription-inference
             ps.pytorch-bin
+            ps.tkinter
           ]))
           ffmpeg
         ];
