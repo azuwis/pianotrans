@@ -4,6 +4,7 @@
 , piano-transcription-inference
 , pytorch
 , tkinter
+, ffmpeg
 }:
 
 buildPythonPackage rec {
@@ -28,6 +29,12 @@ buildPythonPackage rec {
   '';
 
   doCheck = false;
+
+  makeWrapperArgs =
+    let
+      packagesToBinPath = [ ffmpeg ];
+    in
+    [ ''--prefix PATH : "${lib.makeBinPath packagesToBinPath}"'' ];
 
   meta = with lib; {
     description = "Simple GUI for ByteDance's Piano Transcription with Pedals";

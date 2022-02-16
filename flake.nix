@@ -37,14 +37,10 @@
           python39Packages = python39.pkgs;
         })];
       };
-    in {
+    in rec {
+      defaultPackage = with pkgs.python39Packages; toPythonApplication pianotrans;
       devShell = pkgs.mkShell {
-        nativeBuildInputs = with pkgs; [
-          (python39.withPackages(ps: [
-            ps.pianotrans
-          ]))
-          ffmpeg
-        ];
+        nativeBuildInputs = [ defaultPackage ];
       };
     });
 }
