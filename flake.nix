@@ -9,11 +9,11 @@
         overlays = [(self: super: rec {
           python39 = super.python39.override {
             packageOverrides = final: prev: {
-              librosa = prev.librosa.overrideAttrs (o: {
+              librosa = prev.librosa.overrideAttrs (o: rec {
                 version = "0.8.1";
                 src = prev.fetchPypi {
-                  pname = "librosa";
-                  version = "0.8.1";
+                  inherit (o) pname;
+                  inherit version;
                   sha256 = "sha256-xT0F52iuSj5VOuIcLlAVKT5e+/1cEtSX8RBMtRnMprM=";
                 };
               });
