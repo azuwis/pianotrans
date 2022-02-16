@@ -1,3 +1,4 @@
 /build/
 /dist/
+/piano_transcription_inference_data/
 __pycache__/
