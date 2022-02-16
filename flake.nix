@@ -7,7 +7,7 @@
       pkgs = import nixpkgs {
         inherit system;
         overlays = [(self: super: rec {
-          python39 = super.python39.override {
+          python3 = super.python3.override {
             packageOverrides = final: prev: {
               librosa = prev.librosa.overrideAttrs (o: rec {
                 version = "0.8.1";
@@ -29,16 +29,16 @@
                   rm tests/test_pysoundfile.py
                 '';
               });
-              torchlibrosa = self.python39.pkgs.callPackage ./torchlibrosa.nix {};
-              piano-transcription-inference = self.python39.pkgs.callPackage ./piano-transcription-inference.nix {};
-              pianotrans = self.python39.pkgs.callPackage ./pianotrans.nix { pytorch = self.python39.pkgs.pytorch-bin; };
+              torchlibrosa = self.python3.pkgs.callPackage ./torchlibrosa.nix {};
+              piano-transcription-inference = self.python3.pkgs.callPackage ./piano-transcription-inference.nix {};
+              pianotrans = self.python3.pkgs.callPackage ./pianotrans.nix { pytorch = self.python3.pkgs.pytorch-bin; };
             };
           };
-          python39Packages = python39.pkgs;
+          python3Packages = python3.pkgs;
         })];
       };
     in rec {
-      defaultPackage = with pkgs.python39Packages; toPythonApplication pianotrans;
+      defaultPackage = with pkgs.python3Packages; toPythonApplication pianotrans;
       devShell = pkgs.mkShell {
         nativeBuildInputs = [ defaultPackage ];
       };
