@@ -31,6 +31,7 @@
               });
               torchlibrosa = self.python39.pkgs.callPackage ./torchlibrosa.nix {};
               piano-transcription-inference = self.python39.pkgs.callPackage ./piano-transcription-inference.nix {};
+              pianotrans = self.python39.pkgs.callPackage ./pianotrans.nix { pytorch = self.python39.pkgs.pytorch-bin; };
             };
           };
           python39Packages = python39.pkgs;
@@ -40,9 +41,7 @@
       devShell = pkgs.mkShell {
         nativeBuildInputs = with pkgs; [
           (python39.withPackages(ps: [
-            ps.piano-transcription-inference
-            ps.pytorch-bin
-            ps.tkinter
+            ps.pianotrans
           ]))
           ffmpeg
         ];
