@@ -42,7 +42,7 @@ def inference(args):
     transcribed_dict = transcriptor.transcribe(audio, output_midi_path)
     print('Transcribe time: {:.3f} s'.format(time.time() - transcribe_time))
 
-if __name__ == '__main__':
+def main():
     files = tuple(sys.argv)[1:]
 
     if len(files) == 0:
@@ -68,3 +68,6 @@ if __name__ == '__main__':
         inference(args)
 
     input("\nPress Enter to exit...")
+
+if __name__ == '__main__':
+    main()
