@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import argparse
 import os
@@ -27,7 +27,7 @@ def inference(args):
     output_midi_path = args.output_midi_path
     checkpoint_path = args.checkpoint_path
     device = 'cuda' if args.cuda and torch.cuda.is_available() else 'cpu'
- 
+
     # Load audio
     (audio, _) = load_audio(audio_path, sr=sample_rate, mono=True)
 
