@@ -31,7 +31,7 @@ buildPythonPackage rec {
     torchlibrosa
   ];
 
-  patches = [ ./piano-transcription-inference.patch ];
+  patches = [ ./librosa-0.9.patch ];
 
   postPatch = ''
     substituteInPlace piano_transcription_inference/inference.py --replace \
