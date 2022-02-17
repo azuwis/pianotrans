@@ -20,7 +20,7 @@
               soundfile = prev.soundfile.overrideAttrs (o:
                 if (super.stdenv.system == "aarch64-darwin")
                 then {
-                  patches = [ ./soundfile.patch ];
+                  patches = [ ./nix/soundfile/aarch64-darwin.patch ];
                   prePatch = ''
                     rm tests/test_pysoundfile.py
                   '';
