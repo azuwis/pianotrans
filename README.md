@@ -41,7 +41,7 @@ follow the upstream [install and usage][6] guide for Python pip instead.
 1. Open the terminal
 2. Run `sh <(curl -L https://nixos.org/nix/install) --daemon` to install Nix,
    see https://nixos.org/download.html for more details
-3. Run `nix --experimental-features 'flakes nix-command' profile install github:azuwis/pianotrans`
+3. Run `nix --extra-experimental-features 'flakes nix-command' profile install github:azuwis/pianotrans`
    to install pianotrans
 4. Run `pianotrans` to open the GUI, choose audio/video files
 
