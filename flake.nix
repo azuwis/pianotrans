@@ -17,15 +17,8 @@
                   sha256 = "sha256-xT0F52iuSj5VOuIcLlAVKT5e+/1cEtSX8RBMtRnMprM=";
                 };
               });
-              python-rtmidi = prev.python-rtmidi.overrideAttrs (o: {
-                buildInputs = if super.stdenv.isDarwin
-                  then with super.darwin.apple_sdk.frameworks; [ CoreAudio CoreMIDI CoreServices ]
-                  else o.buildInputs;
-              });
-              rtmidi-python = prev.rtmidi-python.overrideAttrs (o: {
-                buildInputs = if super.stdenv.isDarwin
-                  then with super.darwin.apple_sdk.frameworks; [ CoreAudio CoreMIDI CoreServices ]
-                  else o.buildInputs;
+              mido = prev.mido.overrideAttrs (o: {
+                propagatedBuildInputs = if super.stdenv.isDarwin then [] else o.propagatedBuildInputs;
               });
               soundfile = prev.soundfile.overrideAttrs (o: {
                 patches = if (super.stdenv.system == "aarch64-darwin") then [ ./soundfile.patch ] else o.patches;
