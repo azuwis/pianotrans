@@ -32,9 +32,13 @@
                 }
                 else { }
               );
-              torchlibrosa = self.python3.pkgs.callPackage ./torchlibrosa.nix {};
-              piano-transcription-inference = self.python3.pkgs.callPackage ./piano-transcription-inference.nix {};
-              pianotrans = self.python3.pkgs.callPackage ./pianotrans.nix { pytorch = self.python3.pkgs.pytorch-bin; };
+              torchlibrosa = self.python3.pkgs.callPackage ./torchlibrosa.nix { };
+              piano-transcription-inference = self.python3.pkgs.callPackage ./piano-transcription-inference.nix { };
+              pianotrans = self.python3.pkgs.callPackage ./pianotrans.nix (
+                if super.stdenv.isDarwin
+                then { pytorch = self.python3.pkgs.pytorch-bin; }
+                else { }
+              );
             };
           };
           python3Packages = python3.pkgs;
