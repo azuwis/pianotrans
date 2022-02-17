@@ -31,6 +31,8 @@ buildPythonPackage rec {
     torchlibrosa
   ];
 
+  patches = [ ./piano-transcription-inference.patch ];
+
   postPatch = ''
     substituteInPlace piano_transcription_inference/inference.py --replace \
       "checkpoint_path='{}/piano_transcription_inference_data/note_F1=0.9677_pedal_F1=0.9186.pth'.format(str(Path.home()))" \
