@@ -32,7 +32,7 @@ then you can right click an audio file, and choose `Piano Transcribe`.
 PianoTrans automatically uses GPU for inference, if you encounter any problem,
 you can try `PianoTrans-CPU.bat` to force using CPU.
 
-# How to use on Linux/macOS using Nix
+### How to use on Linux/macOS using Nix
 
 This howto is for [Nix][2] on Linux/macOS, if you don't use Nix, you can also
 follow the upstream [install and usage][6] guide for Python pip instead.
