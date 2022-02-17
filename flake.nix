@@ -1,12 +1,15 @@
 {
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   inputs.flake-utils.url = "github:numtide/flake-utils";
+  inputs.devshell.url = "github:numtide/devshell";
+  inputs.devshell.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.devshell.inputs.flake-utils.follows = "flake-utils";
 
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs = { self, nixpkgs, flake-utils, devshell }:
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = import nixpkgs {
         inherit system;
-        overlays = [(self: super: rec {
+        overlays = [ devshell.overlay (self: super: rec {
           python3 = super.python3.override {
             packageOverrides = final: prev: {
               librosa = prev.librosa.overrideAttrs (o: rec {
@@ -46,8 +49,8 @@
       };
     in rec {
       defaultPackage = with pkgs.python3Packages; toPythonApplication pianotrans;
-      devShell = pkgs.mkShell {
-        nativeBuildInputs = [ defaultPackage ];
+      devShell = pkgs.devshell.mkShell {
+        packages = [ defaultPackage ];
       };
     });
 }
