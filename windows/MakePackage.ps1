@@ -99,7 +99,7 @@ if (-not (Test-Path $ScriptsDir\pyinstaller.exe)) {
 
 $Version="v0.2.1"
 if (-not (Test-Path build\dist\PianoTrans-$Version\)) {
-    cp PianoTrans.py, PianoTrans.spec build\
+    cp ..\PianoTrans.py, PianoTrans.spec build\
     & $Python $ScriptsDir\pyinstaller.exe `
     --noconfirm `
     --distpath build\dist\ `
@@ -126,7 +126,7 @@ if (Test-Path build\$ffmpeg_version\) {
 }
 
 MakeDir build\dist\PianoTrans-$Version\reg\
-cp README.md build\dist\PianoTrans-$Version\README.txt
+cp ..\README.md build\dist\PianoTrans-$Version\README.txt
 cp PianoTrans-CPU.bat, RightClickMenuRegister.bat, RightClickMenuUnregister.bat build\dist\PianoTrans-$Version\
 cp RightClickMenuRegister.reg.in, RightClickMenuUnregister.reg build\dist\PianoTrans-$Version\reg\
 
