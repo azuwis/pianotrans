@@ -11,7 +11,7 @@ buildPythonPackage rec {
   pname = "pianotrans";
   version = "0.2.1";
 
-  src = ./.;
+  src = ./../../.;
 
   propagatedBuildInputs = [
     piano-transcription-inference

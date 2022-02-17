@@ -29,7 +29,7 @@
               );
               torchlibrosa = self.python3.pkgs.callPackage ./nix/torchlibrosa { };
               piano-transcription-inference = self.python3.pkgs.callPackage ./nix/piano-transcription-inference { };
-              pianotrans = self.python3.pkgs.callPackage ./pianotrans.nix (
+              pianotrans = self.python3.pkgs.callPackage ./nix/pianotrans (
                 if super.stdenv.isDarwin
                 then { pytorch = self.python3.pkgs.pytorch-bin; }
                 else { }
