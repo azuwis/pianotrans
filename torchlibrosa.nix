@@ -20,6 +20,8 @@ buildPythonPackage rec {
     librosa
   ];
 
+  patches = [ ./torchlibrosa.patch ];
+
   doCheck = false;
 
   meta = with lib; {
