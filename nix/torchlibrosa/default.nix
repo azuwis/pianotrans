@@ -20,7 +20,7 @@ buildPythonPackage rec {
     librosa
   ];
 
-  patches = [ ./torchlibrosa.patch ];
+  patches = [ ./librosa-0.9.patch ];
 
   doCheck = false;
 

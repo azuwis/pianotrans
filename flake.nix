@@ -27,7 +27,7 @@
                 }
                 else { }
               );
-              torchlibrosa = self.python3.pkgs.callPackage ./torchlibrosa.nix { };
+              torchlibrosa = self.python3.pkgs.callPackage ./nix/torchlibrosa { };
               piano-transcription-inference = self.python3.pkgs.callPackage ./piano-transcription-inference.nix { };
               pianotrans = self.python3.pkgs.callPackage ./pianotrans.nix (
                 if super.stdenv.isDarwin
