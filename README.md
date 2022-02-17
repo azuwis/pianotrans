@@ -8,7 +8,8 @@ Using this, we can transcribe piano recordings into MIDI files with pedals.
 
 This is a simple GUI and packaging for Windows and [Nix on Linux/macOS][2].
 
-![screenshot](screenshot.png)
+![screenshot-macos](screenshot-macos.png)
+![screenshot-windows](screenshot-windows.png)
 
 ### Requirement
 
