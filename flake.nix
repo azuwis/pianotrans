@@ -18,16 +18,20 @@
                 };
               });
               python-rtmidi = prev.python-rtmidi.overrideAttrs (o: {
-                buildInputs = with super.darwin.apple_sdk.frameworks; [ CoreAudio CoreMIDI CoreServices ];
+                buildInputs = if super.stdenv.isDarwin
+                  then with super.darwin.apple_sdk.frameworks; [ CoreAudio CoreMIDI CoreServices ]
+                  else o.buildInputs;
               });
               rtmidi-python = prev.rtmidi-python.overrideAttrs (o: {
-                buildInputs = with super.darwin.apple_sdk.frameworks; [ CoreAudio CoreMIDI CoreServices ];
+                buildInputs = if super.stdenv.isDarwin
+                  then with super.darwin.apple_sdk.frameworks; [ CoreAudio CoreMIDI CoreServices ]
+                  else o.buildInputs;
               });
               soundfile = prev.soundfile.overrideAttrs (o: {
-                patches = [ ./soundfile.patch ];
-                prePatch = ''
+                patches = if (super.stdenv.system == "aarch64-darwin") then [ ./soundfile.patch ] else o.patches;
+                prePatch = if (super.stdenv.system == "aarch64-darwin") then ''
                   rm tests/test_pysoundfile.py
-                '';
+                '' else o.prePatch;
               });
               torchlibrosa = self.python3.pkgs.callPackage ./torchlibrosa.nix {};
               piano-transcription-inference = self.python3.pkgs.callPackage ./piano-transcription-inference.nix {};
