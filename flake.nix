@@ -12,14 +12,6 @@
         overlays = [ devshell.overlay (self: super: rec {
           python3 = super.python3.override {
             packageOverrides = final: prev: {
-              librosa = prev.librosa.overrideAttrs (o: rec {
-                version = "0.8.1";
-                src = prev.fetchPypi {
-                  inherit (o) pname;
-                  inherit version;
-                  sha256 = "sha256-xT0F52iuSj5VOuIcLlAVKT5e+/1cEtSX8RBMtRnMprM=";
-                };
-              });
               mido = prev.mido.overrideAttrs (o:
                 if super.stdenv.isDarwin
                 then { propagatedBuildInputs = []; }
