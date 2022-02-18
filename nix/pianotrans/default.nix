@@ -19,15 +19,6 @@ buildPythonPackage rec {
     tkinter
   ];
 
-  postPatch = ''
-    substituteInPlace PianoTrans.py --replace \
-      "'checkpoint_path': checkpoint_path" \
-      "'checkpoint_path': None"
-    sed -i PianoTrans.py \
-      -e '/ffmpeg/d' \
-      -e '/piano_transcription_inference_data/d'
-  '';
-
   doCheck = false;
 
   makeWrapperArgs =

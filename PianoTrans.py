@@ -53,9 +53,12 @@ def main():
         files = filedialog.askopenfilenames(filetypes = [('audio files', '*')])
         files = root.tk.splitlist(files)
 
-    script_dir = os.path.dirname(sys.argv[0])
-    os.environ['PATH'] += os.pathsep + os.path.abspath(os.path.join(script_dir, 'ffmpeg'))
-    checkpoint_path = os.path.abspath(os.path.join(script_dir, 'piano_transcription_inference_data', 'note_F1=0.9677_pedal_F1=0.9186.pth'))
+    checkpoint_path = None
+    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+        # running in a PyInstaller bundle
+        script_dir = os.path.dirname(sys.argv[0])
+        os.environ['PATH'] += os.pathsep + os.path.abspath(os.path.join(script_dir, 'ffmpeg'))
+        checkpoint_path = os.path.abspath(os.path.join(script_dir, 'piano_transcription_inference_data', 'note_F1=0.9677_pedal_F1=0.9186.pth'))
 
     for file in files:
         args = Args(**{
