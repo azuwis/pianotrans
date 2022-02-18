@@ -66,8 +66,11 @@ def main():
     transcribe = Transcribe()
     files = tuple(sys.argv)[1:]
     if len(files) == 0:
+        import platform
         import tkinter as tk
         from tkinter import filedialog, scrolledtext
+
+        ctrl = '⌘' if platform.system() == 'Darwin' else 'Ctrl'
 
         root = tk.Tk()
         root.title('PianoTrans')
@@ -80,7 +83,9 @@ def main():
         sys.stdout.write = sys.stderr.write = output
 
         def open():
-            files = filedialog.askopenfilenames(title='Hold Ctrl to select multiple files', filetypes = [('audio files', '*')])
+            files = filedialog.askopenfilenames(
+                    title='Hold {} to select multiple files'.format(ctrl),
+                    filetypes = [('audio files', '*')])
             files = root.tk.splitlist(files)
             for file in files:
                 transcribe.enqueue(file)
