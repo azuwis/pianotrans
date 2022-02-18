@@ -36,9 +36,13 @@ class Transcribe:
         self.queue.put(file)
 
     def worker(self):
+        import traceback
         while True:
             file = self.queue.get()
-            self.inference(file)
+            try:
+                self.inference(file)
+            except Exception:
+                traceback.print_exc()
             self.queue.task_done()
 
     def inference(self, file):
