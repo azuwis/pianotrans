@@ -42,17 +42,20 @@ def inference(args):
     transcribed_dict = transcriptor.transcribe(audio, output_midi_path)
     print('Transcribe time: {:.3f} s'.format(time.time() - transcribe_time))
 
+def inference_files(files, checkpoint_path):
+    if files:
+        for file in files:
+            args = Args(**{
+                'audio_path': file,
+                'output_midi_path': '{}.mid'.format(file),
+                'cuda': True,
+                'checkpoint_path': checkpoint_path
+            })
+            print('Transcribe {}, please wait...'.format(file))
+            inference(args)
+        print("\nAll finished.")
+
 def main():
-    files = tuple(sys.argv)[1:]
-
-    if len(files) == 0:
-        import tkinter as tk
-        from tkinter import filedialog
-        root = tk.Tk()
-        root.withdraw()
-        files = filedialog.askopenfilenames(filetypes = [('audio files', '*')])
-        files = root.tk.splitlist(files)
-
     checkpoint_path = None
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
         # running in a PyInstaller bundle
@@ -60,17 +63,27 @@ def main():
         os.environ['PATH'] += os.pathsep + os.path.abspath(os.path.join(script_dir, 'ffmpeg'))
         checkpoint_path = os.path.abspath(os.path.join(script_dir, 'piano_transcription_inference_data', 'note_F1=0.9677_pedal_F1=0.9186.pth'))
 
-    for file in files:
-        args = Args(**{
-            'audio_path': file,
-            'output_midi_path': '{}.mid'.format(file),
-            'cuda': True,
-            'checkpoint_path': checkpoint_path
-        })
-        print('Transcribe {}, please wait...'.format(file))
-        inference(args)
-
-    input("\nPress Enter to exit...")
+    files = tuple(sys.argv)[1:]
+    if len(files) == 0:
+        import threading
+        import tkinter as tk
+        from tkinter import filedialog
+        root = tk.Tk()
+        root.title('PianoTrans')
+        root.config(menu=tk.Menu(root))
+        textbox = tk.Text(root)
+        textbox.pack(expand=tk.YES, fill=tk.BOTH)
+        sys.stdout.write = sys.stderr.write = lambda str: textbox.insert(tk.INSERT, str)
+        def open():
+          files = filedialog.askopenfilenames(filetypes = [('audio files', '*')])
+          files = root.tk.splitlist(files)
+          threading.Thread(target=inference_files, args=(files, checkpoint_path)).start()
+        button = tk.Button(root, text="Open", command=open)
+        button.pack()
+        root.after(0, open)
+        root.mainloop()
+    else:
+        inference_files(files, checkpoint_path)
 
 if __name__ == '__main__':
     main()
