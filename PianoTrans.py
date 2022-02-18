@@ -63,13 +63,15 @@ def main():
     files = tuple(sys.argv)[1:]
     if len(files) == 0:
         import tkinter as tk
-        from tkinter import filedialog
+        from tkinter import filedialog, scrolledtext
         root = tk.Tk()
         root.title('PianoTrans')
         root.config(menu=tk.Menu(root))
-        textbox = tk.Text(root)
-        textbox.pack(expand=tk.YES, fill=tk.BOTH)
-        sys.stdout.write = sys.stderr.write = lambda str: textbox.insert(tk.INSERT, str)
+        textbox = scrolledtext.ScrolledText(root)
+        def output(str):
+            textbox.insert(tk.INSERT, str)
+            textbox.see('end')
+        sys.stdout.write = sys.stderr.write = output
         def open():
             files = filedialog.askopenfilenames(title='Hold Ctrl to select multiple files', filetypes = [('audio files', '*')])
             files = root.tk.splitlist(files)
@@ -77,6 +79,7 @@ def main():
                 transcribe.enqueue(file)
         button = tk.Button(root, text="Add files to queue", command=open)
         button.pack()
+        textbox.pack(expand=tk.YES, fill=tk.BOTH)
         root.after(0, open)
         root.mainloop()
     else:
