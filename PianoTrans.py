@@ -69,7 +69,7 @@ def main():
         root.config(menu=tk.Menu(root))
         textbox = scrolledtext.ScrolledText(root)
         def output(str):
-            textbox.insert(tk.INSERT, str)
+            textbox.insert('end', str)
             textbox.see('end')
         sys.stdout.write = sys.stderr.write = output
         def open():
