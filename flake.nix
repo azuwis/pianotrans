@@ -20,7 +20,11 @@
                 else { }
               );
             } // super.lib.optionalAttrs super.stdenv.isDarwin {
-              mido = prev.mido.overrideAttrs (o: {
+              mido = (prev.mido.override {
+                pygame = null;
+                python-rtmidi = null;
+                rtmidi-python = null;
+              }).overrideAttrs (o: {
                 propagatedBuildInputs = [];
               });
             } // super.lib.optionalAttrs (super.stdenv.system == "aarch64-darwin") {
@@ -38,7 +42,9 @@
     in rec {
       defaultPackage = with pkgs.python3Packages; toPythonApplication pianotrans;
       devShell = pkgs.devshell.mkShell {
-        packages = [ defaultPackage ];
+        packages = [
+          (pkgs.python3.withPackages(ps: [ ps.pianotrans ]))
+        ];
       };
     });
 }
