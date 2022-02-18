@@ -12,21 +12,6 @@
         overlays = [ devshell.overlay (self: super: rec {
           python3 = super.python3.override {
             packageOverrides = final: prev: {
-              mido = prev.mido.overrideAttrs (o:
-                if super.stdenv.isDarwin
-                then { propagatedBuildInputs = []; }
-                else { }
-              );
-              soundfile = prev.soundfile.overrideAttrs (o:
-                if (super.stdenv.system == "aarch64-darwin")
-                then {
-                  patches = [ ./nix/soundfile/aarch64-darwin.patch ];
-                  prePatch = ''
-                    rm tests/test_pysoundfile.py
-                  '';
-                }
-                else { }
-              );
               torchlibrosa = self.python3.pkgs.callPackage ./nix/torchlibrosa { };
               piano-transcription-inference = self.python3.pkgs.callPackage ./nix/piano-transcription-inference { };
               pianotrans = self.python3.pkgs.callPackage ./nix/pianotrans (
@@ -34,6 +19,17 @@
                 then { pytorch = self.python3.pkgs.pytorch-bin; }
                 else { }
               );
+            } // super.lib.optionalAttrs super.stdenv.isDarwin {
+              mido = prev.mido.overrideAttrs (o: {
+                propagatedBuildInputs = [];
+              });
+            } // super.lib.optionalAttrs (super.stdenv.system == "aarch64-darwin") {
+              soundfile = prev.soundfile.overrideAttrs (o: {
+                patches = [ ./nix/soundfile/aarch64-darwin.patch ];
+                prePatch = ''
+                  rm tests/test_pysoundfile.py
+                '';
+              });
             };
           };
           python3Packages = python3.pkgs;
