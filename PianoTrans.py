@@ -46,6 +46,7 @@ class Transcribe:
             if self.queue.empty():
                 self.hr()
                 print("All done.")
+                self.hr()
 
     def inference(self, file):
         from piano_transcription_inference import sample_rate, load_audio
@@ -65,40 +66,49 @@ class Transcribe:
         transcribed_dict = self.transcriptor.transcribe(audio, output_midi_path)
         print('Transcribe time: {:.3f} s'.format(time() - transcribe_time))
 
+
+class Gui:
+
+    def __init__(self, transcribe):
+        from platform import system
+        from tkinter import Button, Menu, Tk, scrolledtext
+
+        self.transcribe = transcribe
+        self.ctrl = '⌘' if system() == 'Darwin' else 'CTRL'
+
+        self.root = Tk()
+        self.root.title('PianoTrans')
+        self.root.config(menu=Menu(self.root))
+
+        self.textbox = scrolledtext.ScrolledText(self.root)
+        sys.stdout.write = sys.stderr.write = self.output
+
+        button = Button(self.root, text="Add files to queue", command=self.open)
+
+        button.pack()
+        self.textbox.pack(expand='yes', fill='both')
+
+        self.root.after(0, self.open)
+        self.root.mainloop()
+
+    def open(self):
+        from tkinter import filedialog
+        files = filedialog.askopenfilenames(
+                title='Hold {} to select multiple files'.format(self.ctrl),
+                filetypes = [('audio files', '*')])
+        files = self.root.tk.splitlist(files)
+        for file in files:
+            self.transcribe.enqueue(file)
+
+    def output(self, str):
+        self.textbox.insert('end', str)
+        self.textbox.see('end')
+
 def main():
     transcribe = Transcribe()
     files = tuple(sys.argv)[1:]
     if len(files) == 0:
-        import platform
-        import tkinter as tk
-        from tkinter import filedialog, scrolledtext
-
-        ctrl = '⌘' if platform.system() == 'Darwin' else 'CTRL'
-
-        root = tk.Tk()
-        root.title('PianoTrans')
-        root.config(menu=tk.Menu(root))
-
-        textbox = scrolledtext.ScrolledText(root)
-        def output(str):
-            textbox.insert('end', str)
-            textbox.see('end')
-        sys.stdout.write = sys.stderr.write = output
-
-        def open():
-            files = filedialog.askopenfilenames(
-                    title='Hold {} to select multiple files'.format(ctrl),
-                    filetypes = [('audio files', '*')])
-            files = root.tk.splitlist(files)
-            for file in files:
-                transcribe.enqueue(file)
-        button = tk.Button(root, text="Add files to queue", command=open)
-
-        button.pack()
-        textbox.pack(expand=tk.YES, fill=tk.BOTH)
-
-        root.after(0, open)
-        root.mainloop()
+        Gui(transcribe)
     else:
         for file in files:
             transcribe.enqueue(file)
