@@ -72,7 +72,7 @@ def main():
         import tkinter as tk
         from tkinter import filedialog, scrolledtext
 
-        ctrl = '⌘' if platform.system() == 'Darwin' else 'Ctrl'
+        ctrl = '⌘' if platform.system() == 'Darwin' else 'CTRL'
 
         root = tk.Tk()
         root.title('PianoTrans')
