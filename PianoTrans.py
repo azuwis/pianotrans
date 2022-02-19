@@ -1,11 +1,7 @@
 #!/usr/bin/env python3
 
 import os
-import queue
 import sys
-import threading
-import time
-import torch
 
 
 class Transcribe:
@@ -18,15 +14,18 @@ class Transcribe:
         checkpoint_path = os.path.abspath(os.path.join(script_dir, 'piano_transcription_inference_data', 'note_F1=0.9677_pedal_F1=0.9186.pth'))
 
     def __init__(self):
-        self.queue = queue.Queue()
-        threading.Thread(target=self.worker, daemon=True).start()
+        from queue import Queue
+        from threading import Thread
         self.transcriptor = None
+        self.queue = Queue()
+        Thread(target=self.worker, daemon=True).start()
 
     def hr(self):
         print('------------------------------------------------------------')
 
     def enqueue(self, file):
         if not self.transcriptor:
+            import torch
             from piano_transcription_inference import PianoTranscription
             device = 'cuda' if torch.cuda.is_available() else 'cpu'
             self.transcriptor = PianoTranscription(device=device, checkpoint_path=self.checkpoint_path)
@@ -36,19 +35,20 @@ class Transcribe:
         self.queue.put(file)
 
     def worker(self):
-        import traceback
         while True:
             file = self.queue.get()
             try:
                 self.inference(file)
             except Exception:
-                traceback.print_exc()
+                from traceback import print_exc
+                print_exc()
             self.queue.task_done()
             if self.queue.empty():
                 print("\nAll done.")
 
     def inference(self, file):
         from piano_transcription_inference import sample_rate, load_audio
+        from time import time
 
         self.hr()
         print('Transcribe: {}'.format(file))
@@ -60,9 +60,9 @@ class Transcribe:
         (audio, _) = load_audio(audio_path, sr=sample_rate, mono=True)
 
         # Transcribe and write out to MIDI file
-        transcribe_time = time.time()
+        transcribe_time = time()
         transcribed_dict = self.transcriptor.transcribe(audio, output_midi_path)
-        print('Transcribe time: {:.3f} s'.format(time.time() - transcribe_time))
+        print('Transcribe time: {:.3f} s'.format(time() - transcribe_time))
 
 def main():
     transcribe = Transcribe()
