@@ -14,11 +14,7 @@
             packageOverrides = final: prev: {
               torchlibrosa = python3Packages.callPackage ./nix/torchlibrosa { };
               piano-transcription-inference = python3Packages.callPackage ./nix/piano-transcription-inference { };
-              pianotrans = python3Packages.callPackage ./nix/pianotrans (
-                if super.stdenv.isDarwin
-                then { pytorch = python3Packages.pytorch-bin; }
-                else { }
-              );
+              pianotrans = python3Packages.callPackage ./nix/pianotrans { };
             } // super.lib.optionalAttrs super.stdenv.isDarwin {
               mido = (prev.mido.override {
                 pygame = null;
@@ -27,6 +23,7 @@
               }).overrideAttrs (o: {
                 propagatedBuildInputs = [];
               });
+              pytorch = prev.pytorch-bin;
             } // super.lib.optionalAttrs (super.stdenv.system == "aarch64-darwin") {
               soundfile = prev.soundfile.overrideAttrs (o: {
                 patches = [ ./nix/soundfile/aarch64-darwin.patch ];
