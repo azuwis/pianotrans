@@ -24,17 +24,16 @@ class Transcribe:
         print('------------------------------------------------------------')
 
     def enqueue(self, file):
-        if not self.transcriptor:
-            import torch
-            from piano_transcription_inference import PianoTranscription
-            device = 'cuda' if torch.cuda.is_available() else 'cpu'
-            self.transcriptor = PianoTranscription(device=device, checkpoint_path=self.checkpoint_path)
-            self.hr()
-
         print('Queue: {}'.format(file))
         self.queue.put(file)
 
     def worker(self):
+        import torch
+        from piano_transcription_inference import PianoTranscription
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.hr()
+        self.transcriptor = PianoTranscription(device=device, checkpoint_path=self.checkpoint_path)
+
         while True:
             file = self.queue.get()
             try:
