@@ -44,7 +44,8 @@ class Transcribe:
                 print_exc()
             self.queue.task_done()
             if self.queue.empty():
-                print("\nAll done.")
+                self.hr()
+                print("All done.")
 
     def inference(self, file):
         from piano_transcription_inference import sample_rate, load_audio
