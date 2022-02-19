@@ -94,7 +94,7 @@ class Gui:
         from tkinter import filedialog
         files = filedialog.askopenfilenames(
                 title='Hold {} to select multiple files'.format(self.ctrl),
-                filetypes = [('audio files', '*')])
+                filetypes = [('audio/video files', '*')])
         files = self.root.tk.splitlist(files)
         for file in files:
             self.transcribe.enqueue(file)
