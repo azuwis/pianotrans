@@ -68,7 +68,7 @@ class Transcribe:
 
 class Gui:
 
-    def __init__(self, transcribe):
+    def __init__(self, transcribe, files=None):
         from platform import system
         from tkinter import Button, Menu, Tk, scrolledtext
 
@@ -87,7 +87,10 @@ class Gui:
         button.pack()
         self.textbox.pack(expand='yes', fill='both')
 
-        self.root.after(0, self.open)
+        if files:
+            self.enqueue(files)
+        else:
+            self.root.after(0, self.open)
         self.root.mainloop()
 
     def open(self):
@@ -96,6 +99,9 @@ class Gui:
                 title='Hold {} to select multiple files'.format(self.ctrl),
                 filetypes = [('audio/video files', '*')])
         files = self.root.tk.splitlist(files)
+        self.enqueue(files)
+
+    def enqueue(self, files):
         for file in files:
             self.transcribe.enqueue(file)
 
@@ -106,12 +112,12 @@ class Gui:
 def main():
     transcribe = Transcribe()
     files = tuple(sys.argv)[1:]
-    if len(files) == 0:
-        Gui(transcribe)
-    else:
+    if os.isatty(0) and len(files) > 0:
         for file in files:
             transcribe.enqueue(file)
         transcribe.queue.join()
+    else:
+        Gui(transcribe, files=files)
 
 
 if __name__ == '__main__':
