@@ -21,7 +21,7 @@ class Transcribe:
         Thread(target=self.worker, daemon=True).start()
 
     def hr(self):
-        print('------------------------------------------------------------')
+        print('-'*80)
 
     def enqueue(self, file):
         print('Queue: {}'.format(file))
