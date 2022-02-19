@@ -12,11 +12,11 @@
         overlays = [ devshell.overlay (self: super: rec {
           python3 = super.python3.override {
             packageOverrides = final: prev: {
-              torchlibrosa = self.python3.pkgs.callPackage ./nix/torchlibrosa { };
-              piano-transcription-inference = self.python3.pkgs.callPackage ./nix/piano-transcription-inference { };
-              pianotrans = self.python3.pkgs.callPackage ./nix/pianotrans (
+              torchlibrosa = python3Packages.callPackage ./nix/torchlibrosa { };
+              piano-transcription-inference = python3Packages.callPackage ./nix/piano-transcription-inference { };
+              pianotrans = python3Packages.callPackage ./nix/pianotrans (
                 if super.stdenv.isDarwin
-                then { pytorch = self.python3.pkgs.pytorch-bin; }
+                then { pytorch = python3Packages.pytorch-bin; }
                 else { }
               );
             } // super.lib.optionalAttrs super.stdenv.isDarwin {
