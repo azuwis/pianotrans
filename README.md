@@ -52,6 +52,8 @@ follow the upstream [install and usage][6] guide for Python pip instead.
    ```
 4. Run `pianotrans` to open the GUI, choose audio/video files
 
+To upgrade pianotrans, run `nix profile upgrade github:azuwis/pianotrans`
+
 [1]: https://github.com/bytedance/piano_transcription
 [2]: https://nixos.org
 [3]: https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads
