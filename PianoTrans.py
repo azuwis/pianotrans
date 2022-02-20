@@ -44,7 +44,7 @@ class Transcribe:
             self.queue.task_done()
             if self.queue.empty():
                 self.hr()
-                print("All done.")
+                print("Queue finished.")
                 self.hr()
 
     def inference(self, file):
