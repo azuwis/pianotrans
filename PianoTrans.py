@@ -109,6 +109,15 @@ class Gui:
         self.textbox.insert('end', str)
         self.textbox.see('end')
 
+def usage():
+    command = sys.argv[0]
+    if os.path.isabs(command):
+        command = os.path.basename(command)
+    print ('''
+You can use pianotrans in console only environment:
+
+    {} file1 file2 ...'''.format(command))
+
 def main():
     transcribe = Transcribe()
     files = tuple(sys.argv)[1:]
@@ -117,7 +126,12 @@ def main():
             transcribe.enqueue(file)
         transcribe.queue.join()
     else:
-        Gui(transcribe, files=files)
+        from tkinter import TclError
+        try:
+            Gui(transcribe, files=files)
+        except TclError as e:
+            print ('Error open GUI: {}'.format(e))
+            usage()
 
 
 if __name__ == '__main__':
