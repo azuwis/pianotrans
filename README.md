@@ -39,10 +39,17 @@ This howto is for [Nix][2] on Linux/macOS, if you don't use Nix, you can also
 follow the upstream [install and usage][6] guide for Python pip instead.
 
 1. Open the terminal
-2. Run `sh <(curl -L https://nixos.org/nix/install) --daemon` to install Nix,
-   see https://nixos.org/download.html for more details
-3. Run `nix --extra-experimental-features 'flakes nix-command' profile install github:azuwis/pianotrans`
-   to install pianotrans
+2. Run the following commands to install and setup Nix:
+   ``` sh
+   sh <(curl -L https://nixos.org/nix/install) --daemon
+   mkdir -p ~/.config/nix
+   echo 'experimental-features = nix-command flakes' > ~/.config/nix/nix.conf
+   ```
+   See https://nixos.org/download.html for more details
+3. Use Nix to install pianotrans:
+   ``` sh
+   nix profile install github:azuwis/pianotrans
+   ```
 4. Run `pianotrans` to open the GUI, choose audio/video files
 
 [1]: https://github.com/bytedance/piano_transcription
