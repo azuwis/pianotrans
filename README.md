@@ -24,19 +24,19 @@ Only Windows 10, Debian Linux 10, and macOS 12.1 M1 are tested.
 2. Download and unpack [PianoTrans-v0.2.1.7z][4] (1.5GB download, unpack using [7zip][5])
 3. Close other apps to free memory, need at least 2G free memory
 4. Run `PianoTrans.exe` in `PianoTrans` directory
-5. Choose audio/video files, multiple selection is supported
-6. Result MIDI files are in the same directory as the audio files
+5. Choose audio/video files, multiple selection supported
+6. Result MIDI files are in the same directory as the input files
 
-If you want right click menu for audio files, run `RightClickMenuRegister.bat`,
-then you can right click an audio file, and choose `Piano Transcribe`.
+If you want right click menu, run `RightClickMenuRegister.bat`, then you can
+select multiple audio/video files, right click and choose `Piano Transcribe`.
 
 PianoTrans automatically uses GPU for inference, if you encounter any problem,
 you can try `PianoTrans-CPU.bat` to force using CPU.
 
 ### How to use on Linux/macOS using Nix
 
-This howto is for [Nix][2] on Linux/macOS, if you don't use Nix, you can also
-follow the upstream [install and usage][6] guide for Python pip instead.
+Note: This howto is for [Nix][2] on Linux/macOS, if you don't use Nix, you can
+also follow the upstream [install and usage][6] guide for Python pip instead.
 
 1. Open the terminal
 2. Run the following commands to install and setup Nix:
@@ -52,7 +52,9 @@ follow the upstream [install and usage][6] guide for Python pip instead.
    ```
 4. Run `pianotrans` to open the GUI, choose audio/video files
 
-To upgrade pianotrans, run `nix profile upgrade github:azuwis/pianotrans`
+For CLI usage, run `pianotrans file1 file2 ...`.
+
+To upgrade pianotrans, run `nix profile upgrade github:azuwis/pianotrans`.
 
 [1]: https://github.com/bytedance/piano_transcription
 [2]: https://nixos.org
