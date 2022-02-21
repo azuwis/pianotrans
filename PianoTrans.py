@@ -6,16 +6,10 @@ import sys
 
 class Transcribe:
 
-    checkpoint_path = None
-    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-        # running in a PyInstaller bundle
-        script_dir = os.path.dirname(sys.argv[0])
-        os.environ['PATH'] += os.pathsep + os.path.abspath(os.path.join(script_dir, 'ffmpeg'))
-        checkpoint_path = os.path.abspath(os.path.join(script_dir, 'piano_transcription_inference_data', 'note_F1=0.9677_pedal_F1=0.9186.pth'))
-
-    def __init__(self):
+    def __init__(self, checkpoint=None):
         from queue import Queue
         from threading import Thread
+        self.checkpoint = checkpoint
         self.transcriptor = None
         self.queue = Queue()
         Thread(target=self.worker, daemon=True).start()
@@ -32,7 +26,7 @@ class Transcribe:
         from piano_transcription_inference import PianoTranscription
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.hr()
-        self.transcriptor = PianoTranscription(device=device, checkpoint_path=self.checkpoint_path)
+        self.transcriptor = PianoTranscription(device=device, checkpoint_path=self.checkpoint)
 
         while True:
             file = self.queue.get()
@@ -119,9 +113,17 @@ You can use pianotrans in console only environment:
     {} file1 file2 ...'''.format(command))
 
 def main():
-    transcribe = Transcribe()
+    checkpoint = None
+    is_bundle = getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')
+    if is_bundle:
+        # running in a PyInstaller bundle
+        script_dir = os.path.dirname(sys.argv[0])
+        os.environ['PATH'] += os.pathsep + os.path.abspath(os.path.join(script_dir, 'ffmpeg'))
+        checkpoint = os.path.abspath(os.path.join(script_dir, 'piano_transcription_inference_data', 'note_F1=0.9677_pedal_F1=0.9186.pth'))
+
+    transcribe = Transcribe(checkpoint=checkpoint)
     files = tuple(sys.argv)[1:]
-    if os.isatty(0) and len(files) > 0:
+    if not is_bundle and os.isatty(0) and len(files) > 0:
         for file in files:
             transcribe.enqueue(file)
         transcribe.queue.join()
