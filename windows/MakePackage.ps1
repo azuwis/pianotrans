@@ -97,7 +97,7 @@ if (-not (Test-Path $ScriptsDir\pyinstaller.exe)) {
 
 & $Python -m pip freeze | Out-File -encoding UTF8 pip.txt
 
-$Version="v0.2.1"
+$Version="v1.0"
 if (-not (Test-Path build\dist\PianoTrans-$Version\)) {
     cp ..\PianoTrans.py, PianoTrans.spec build\
     & $Python $ScriptsDir\pyinstaller.exe `
