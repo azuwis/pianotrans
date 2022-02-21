@@ -7,30 +7,32 @@ function MakeDir {
 
 function DownloadUrl {
     param($Url,$File)
-    $WebClient = New-Object System.Net.WebClient
-    try {
-        $Task = $WebClient.DownloadFileTaskAsync($Url, "$PSScriptRoot\$File")
-        Register-ObjectEvent -InputObject $WebClient -EventName DownloadProgressChanged -SourceIdentifier WebClient.DownloadProgressChanged | Out-Null
-        Start-Sleep -Seconds 1
-        While (-Not $Task.IsCompleted) {
+    if (-not (Test-Path $File)) {
+        $WebClient = New-Object System.Net.WebClient
+        try {
+            $Task = $WebClient.DownloadFileTaskAsync($Url, "$PSScriptRoot\$File")
+            Register-ObjectEvent -InputObject $WebClient -EventName DownloadProgressChanged -SourceIdentifier WebClient.DownloadProgressChanged | Out-Null
             Start-Sleep -Seconds 1
-            $EventData = Get-Event -SourceIdentifier WebClient.DownloadProgressChanged | Select-Object -ExpandProperty "SourceEventArgs" -Last 1
-            $TotalPercent = $EventData | Select-Object -ExpandProperty "ProgressPercentage"
-            Write-Progress -Activity "Downloading $File from $Url" -Status "Percent Complete: $($TotalPercent)%" -PercentComplete $TotalPercent
+            While (-Not $Task.IsCompleted) {
+                Start-Sleep -Seconds 1
+                $EventData = Get-Event -SourceIdentifier WebClient.DownloadProgressChanged | Select-Object -ExpandProperty "SourceEventArgs" -Last 1
+                $TotalPercent = $EventData | Select-Object -ExpandProperty "ProgressPercentage"
+                Write-Progress -Activity "Downloading $File from $Url" -Status "Percent Complete: $($TotalPercent)%" -PercentComplete $TotalPercent
+            }
         }
-    }
-    catch [System.Net.WebException] {
-        Write-Host("Cannot download $Url")
-        if ($_.Exception.InnerException) {
-            Write-Error $_.Exception.InnerException.Message
-        } else {
-            Write-Error $_.Exception.Message
+        catch [System.Net.WebException] {
+            Write-Host("Cannot download $Url")
+            if ($_.Exception.InnerException) {
+                Write-Error $_.Exception.InnerException.Message
+            } else {
+                Write-Error $_.Exception.Message
+            }
         }
-    }
-    finally {
-        Write-Progress -Activity "Downloading $File from $Url" -Completed
-        Unregister-Event -SourceIdentifier WebClient.DownloadProgressChanged
-        $WebClient.Dispose()
+        finally {
+            Write-Progress -Activity "Downloading $File from $Url" -Completed
+            Unregister-Event -SourceIdentifier WebClient.DownloadProgressChanged
+            $WebClient.Dispose()
+        }
     }
 }
 
@@ -45,9 +47,7 @@ function UnpackUrl {
     }
     if (-not (Test-Path "$TestPath")) {
         Write-Host "UnpackUrl: $Url -> $UnpackDir"
-        if (-not (Test-Path $Output)) {
-            DownloadUrl -Url $Url -File $Output
-        }
+        DownloadUrl -Url $Url -File $Output
         switch ((Get-Item $Output).Extension) {
             '.zip' {
                 $shell = New-Object -com shell.application
