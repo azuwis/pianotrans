@@ -125,6 +125,10 @@ if (Test-Path build\$ffmpeg_version\) {
     rm -r build\$ffmpeg_version\
 }
 
+DownloadUrl -Url https://github.com/zenden2k/context-menu-launcher/releases/download/1.0/singleinstance.exe `
+    -File dist\downloads\singleinstance.exe
+cp dist\downloads\singleinstance.exe build\dist\PianoTrans-$Version\
+
 MakeDir build\dist\PianoTrans-$Version\reg\
 cp ..\README.md build\dist\PianoTrans-$Version\README.txt
 cp PianoTrans-CPU.bat, RightClickMenuRegister.bat, RightClickMenuUnregister.bat build\dist\PianoTrans-$Version\
