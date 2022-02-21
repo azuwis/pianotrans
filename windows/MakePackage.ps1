@@ -88,7 +88,7 @@ if (-not (Test-Path $LibsDir\torch)) {
 }
 
 if (-not (Test-Path $LibsDir\piano_transcription_inference)) {
-    & $Python -m pip --cache-dir "$PipCacheDir" install numpy==1.20.0 piano_transcription_inference
+    & $Python -m pip --cache-dir "$PipCacheDir" install librosa==0.8.1 piano_transcription_inference
 }
 
 if (-not (Test-Path $ScriptsDir\pyinstaller.exe)) {

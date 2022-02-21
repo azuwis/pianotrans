@@ -4,7 +4,11 @@ block_cipher = None
 
 from PyInstaller.utils.hooks import collect_data_files, copy_metadata
 datas = collect_data_files('librosa')
-hiddenimports = ['sklearn.utils._weight_vector', 'sklearn.neighbors._partition_nodes']
+hiddenimports = [
+    'sklearn.neighbors._partition_nodes',
+    'sklearn.utils._typedefs',
+    'sklearn.utils._weight_vector',
+    ]
 
 a = Analysis(['PianoTrans.py'],
              pathex=['build\\'],
