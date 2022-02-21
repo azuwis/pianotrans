@@ -17,9 +17,10 @@ class Transcribe:
     def hr(self):
         print('-'*80)
 
-    def enqueue(self, file):
-        print('Queue: {}'.format(file))
-        self.queue.put(file)
+    def enqueue(self, files):
+        for file in files:
+            print('Queue: {}'.format(file))
+            self.queue.put(file)
 
     def worker(self):
         import torch
@@ -82,7 +83,7 @@ class Gui:
         self.textbox.pack(expand='yes', fill='both')
 
         if files:
-            self.enqueue(files)
+            self.transcribe.enqueue(files)
         else:
             self.root.after(0, self.open)
         self.root.mainloop()
@@ -93,11 +94,7 @@ class Gui:
                 title='Hold {} to select multiple files'.format(self.ctrl),
                 filetypes = [('audio/video files', '*')])
         files = self.root.tk.splitlist(files)
-        self.enqueue(files)
-
-    def enqueue(self, files):
-        for file in files:
-            self.transcribe.enqueue(file)
+        self.transcribe.enqueue(files)
 
     def output(self, str):
         self.textbox.insert('end', str)
@@ -124,8 +121,7 @@ def main():
     transcribe = Transcribe(checkpoint=checkpoint)
     files = tuple(sys.argv)[1:]
     if not is_bundle and os.isatty(0) and len(files) > 0:
-        for file in files:
-            transcribe.enqueue(file)
+        transcribe.enqueue(files)
         transcribe.queue.join()
     else:
         from tkinter import TclError
