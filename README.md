@@ -84,7 +84,7 @@ $ nix profile list
   - Add real GUI alongside CLI
   - GUI allow adding files to transcribe queue
 * Windows:
-  - Right-click menu supports multiple files 
+  - Right-click menu supports multiple files (need to re-run `RightClickMenuRegister.bat`)
   - Update pytorch to 1.10.2
 
 #### [0.2.1] - 2021-12-23
