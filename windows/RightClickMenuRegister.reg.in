@@ -3,7 +3,7 @@ Windows Registry Editor Version 5.00
 [HKEY_CLASSES_ROOT\*\shell\PianoTrans]
 @="Piano Transcribe"
 "MultiSelectModel"="Player"
-"AppliesTo"=".flac OR .m4a OR .mp3 OR .mp4 OR .wav OR .webm"
+"AppliesTo"=".aac OR .flac OR .flv OR .m4a OR .mp3 OR .mp4 OR .ogg OR .wav OR .webm OR .wma"
 
 [HKEY_CLASSES_ROOT\*\shell\PianoTrans\command]
 @="\"@REPLACE@singleinstance.exe\" \"%1\" \"@REPLACE@PianoTrans.exe\" $files"
