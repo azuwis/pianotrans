@@ -24,7 +24,7 @@ Only Windows 10, Debian Linux 10, and macOS 12.1 M1 are tested.
 ### How to use on Windows
 
 1. Download [Microsoft Visual C++ Redistributable for Visual Studio 2015, 2017 and 2019][3] `vc_redist_x64.exe` and install
-2. Download and unpack [PianoTrans-v0.2.1.7z][4] (1.5GB download, unpack using [7zip][5])
+2. Download and unpack [PianoTrans-v1.0.7z][4] (1.5GB download, unpack using [7zip][5])
 3. Close other apps to free memory, need at least 2G free memory
 4. Run `PianoTrans.exe` in `PianoTrans` directory
 5. Choose audio/video files, hold CTRL to select multiple files
@@ -62,7 +62,7 @@ To upgrade pianotrans, run `nix profile upgrade github:azuwis/pianotrans`.
 [1]: https://github.com/bytedance/piano_transcription
 [2]: https://nixos.org
 [3]: https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads
-[4]: https://github.com/azuwis/PianoTrans/releases/download/v0.2.1/PianoTrans-v0.2.1.7z
+[4]: https://github.com/azuwis/PianoTrans/releases/download/v1.0/PianoTrans-v1.0.7z
 [5]: https://www.7-zip.org/download.html
 [6]: https://github.com/qiuqiangkong/piano_transcription_inference
 
