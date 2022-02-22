@@ -27,7 +27,7 @@ Only Windows 10, Debian Linux 10, and macOS 12.1 M1 are tested.
 2. Download and unpack [PianoTrans-v0.2.1.7z][4] (1.5GB download, unpack using [7zip][5])
 3. Close other apps to free memory, need at least 2G free memory
 4. Run `PianoTrans.exe` in `PianoTrans` directory
-5. Choose audio/video files, multiple selection supported
+5. Choose audio/video files, hold CTRL to select multiple files
 6. Result MIDI files are in the same directory as the input files
 
 If you want right click menu, run `RightClickMenuRegister.bat`, then you can
@@ -53,7 +53,7 @@ also follow the upstream [install and usage][6] guide for Python pip instead.
    ``` sh
    nix profile install github:azuwis/pianotrans
    ```
-4. Run `pianotrans` to open the GUI, choose audio/video files
+4. Run `pianotrans` to open the GUI, choose audio/video files, hold ⌘ to select multiple files
 
 For CLI usage, run `pianotrans file1 file2 ...`.
 
