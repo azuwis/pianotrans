@@ -57,7 +57,16 @@ also follow the upstream [install and usage][6] guide for Python pip instead.
 
 For CLI usage, run `pianotrans file1 file2 ...`.
 
-To upgrade pianotrans, run `nix profile upgrade github:azuwis/pianotrans`.
+To upgrade pianotrans, run:
+``` sh
+$ nix profile list
+0 github:azuwis/pianotrans#defaultPackage.aarch64-linux github:azuwis/pianotrans/e19d5fd12f4295816fad49f6398e2e53ed2d2b7a#defaultPackage.aarch64-linux /nix/store/zdalndvcralish8d43drzslv0p4pm97v-python3.9-pianotrans-0.2.1
+# list nix profiles, `0` is pianotrans
+$ nix profile upgrade 0
+$ nix profile list
+0 github:azuwis/pianotrans#defaultPackage.aarch64-linux github:azuwis/pianotrans/e944720dd0dfcc2b87dcc39c1fdaab086eba4ca6#defaultPackage.aarch64-linux /nix/store/rv5iikrdvc7jrc7mqs8mkc21qh2gklhx-python3.9-pianotrans-1.0
+# pianotrans upgraded to v1.0
+```
 
 [1]: https://github.com/bytedance/piano_transcription
 [2]: https://nixos.org
