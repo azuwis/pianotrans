@@ -16,13 +16,6 @@
               piano-transcription-inference = python3Packages.callPackage ./nix/piano-transcription-inference { };
               pianotrans = python3Packages.callPackage ./nix/pianotrans { };
             } // super.lib.optionalAttrs super.stdenv.isDarwin {
-              mido = (prev.mido.override {
-                pygame = null;
-                python-rtmidi = null;
-                rtmidi-python = null;
-              }).overrideAttrs (o: {
-                propagatedBuildInputs = [];
-              });
               pytorch = prev.pytorch-bin;
             } // super.lib.optionalAttrs (super.stdenv.system == "aarch64-darwin") {
               soundfile = prev.soundfile.overrideAttrs (o: {
