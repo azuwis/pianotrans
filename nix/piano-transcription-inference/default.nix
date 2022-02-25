@@ -40,12 +40,13 @@ buildPythonPackage rec {
       "checkpoint_path='${checkpoint}'"
   '';
 
+  # Project has no tests
   doCheck = false;
 
   meta = with lib; {
     description = "PyTorch implemention of part of librosa functions";
     homepage = "https://github.com/qiuqiangkong/torchlibrosa";
     license = licenses.mit;
-    maintainers = with maintainers; [ ];
+    maintainers = with maintainers; [ azuwis ];
   };
 }

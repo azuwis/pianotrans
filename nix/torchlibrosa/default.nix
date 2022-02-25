@@ -22,12 +22,13 @@ buildPythonPackage rec {
 
   patches = [ ./librosa-0.9.patch ];
 
+  # Project has no tests
   doCheck = false;
 
   meta = with lib; {
     description = "PyTorch implemention of part of librosa functions";
     homepage = "https://github.com/qiuqiangkong/torchlibrosa";
     license = licenses.mit;
-    maintainers = with maintainers; [ ];
+    maintainers = with maintainers; [ azuwis ];
   };
 }

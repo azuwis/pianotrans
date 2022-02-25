@@ -19,6 +19,7 @@ buildPythonPackage rec {
     tkinter
   ];
 
+  # Project has no tests
   doCheck = false;
 
   makeWrapperArgs =
@@ -30,6 +31,6 @@ buildPythonPackage rec {
   meta = with lib; {
     description = "Simple GUI for ByteDance's Piano Transcription with Pedals";
     homepage = "https://github.com/azuwis/pianotrans";
-    maintainers = with maintainers; [ ];
+    maintainers = with maintainers; [ azuwis ];
   };
 }
