@@ -44,7 +44,12 @@ buildPythonPackage rec {
   postPatch = ''
     substituteInPlace piano_transcription_inference/inference.py --replace \
       "checkpoint_path='{}/piano_transcription_inference_data/note_F1=0.9677_pedal_F1=0.9186.pth'.format(str(Path.home()))" \
-      "checkpoint_path='${checkpoint}'"
+      "checkpoint_path='$out/share/checkpoint.pth'"
+  '';
+
+  postInstall = ''
+    mkdir "$out/share"
+    cp "${checkpoint}" "$out/share/checkpoint.pth"
   '';
 
   # Project has no tests
