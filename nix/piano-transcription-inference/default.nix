@@ -20,9 +20,8 @@ buildPythonPackage rec {
   };
 
   checkpoint = fetchurl {
-    name = "note_F1=0.9677_pedal_F1=0.9186.pth";
-    # url = "https://zenodo.org/record/4034264/files/CRNN_note_F1%3D0.9677_pedal_F1%3D0.9186.pth?download=1";
-    url = "https://github.com/BambooOnFire/Piano-AI-Transcription/raw/main/piano_transcription_inference_data/note_F1%3D0.9677_pedal_F1%3D0.9186.pth";
+    name = "piano-transcription-inference.pth";
+    url = "https://zenodo.org/record/4034264/files/CRNN_note_F1%3D0.9677_pedal_F1%3D0.9186.pth?download=1";
     sha256 = "sha256-w/qXMHJb9Kdi8cFLyAzVmG6s2gGwJvWkolJc1geHYUE=";
   };
 
