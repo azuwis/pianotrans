@@ -2,6 +2,7 @@
 , lib
 , buildPythonPackage
 , fetchPypi
+, fetchpatch
 , fetchurl
 , matplotlib
 , mido
@@ -32,7 +33,14 @@ buildPythonPackage rec {
     torchlibrosa
   ];
 
-  patches = [ ./librosa-0.9.patch ];
+  patches = [
+    # Fix run against librosa 0.9.0
+    # https://github.com/qiuqiangkong/piano_transcription_inference/pull/10
+    (fetchpatch {
+      url = "https://github.com/qiuqiangkong/piano_transcription_inference/commit/b2d448916be771cd228f709c23c474942008e3e8.patch";
+      sha256 = "sha256-8O4VtFij//k3fhcbMRz4J8Iz4AdOPLkuk3UTxuCSy8U=";
+    })
+  ];
 
   postPatch = ''
     substituteInPlace piano_transcription_inference/inference.py --replace \
