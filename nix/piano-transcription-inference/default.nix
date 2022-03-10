@@ -44,8 +44,8 @@ buildPythonPackage rec {
   doCheck = false;
 
   meta = with lib; {
-    description = "PyTorch implemention of part of librosa functions";
-    homepage = "https://github.com/qiuqiangkong/torchlibrosa";
+    description = "A piano transcription inference package";
+    homepage = "https://github.com/qiuqiangkong/piano_transcription_inference";
     license = licenses.mit;
     maintainers = with maintainers; [ azuwis ];
   };
