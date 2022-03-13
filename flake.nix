@@ -17,12 +17,6 @@
               pianotrans = python3Packages.callPackage ./nix/pianotrans { };
             } // super.lib.optionalAttrs super.stdenv.isDarwin {
               pytorch = prev.pytorch-bin;
-            } // super.lib.optionalAttrs (super.stdenv.system == "aarch64-darwin") {
-              soundfile = prev.soundfile.overrideAttrs (o: {
-                doCheck = false;
-                doInstallCheck = false;
-                patches = [ ./nix/soundfile/aarch64-darwin.patch ];
-              });
             };
           };
           python3Packages = python3.pkgs;
