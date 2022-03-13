@@ -1,19 +1,21 @@
-{ stdenv
-, lib
-, buildPythonPackage
-, piano-transcription-inference
-, pytorch
-, tkinter
+{ lib
+, fetchFromGitHub
+, python3Packages
 , ffmpeg
 }:
 
-buildPythonPackage rec {
+python3Packages.buildPythonApplication rec {
   pname = "pianotrans";
   version = "1.0";
 
-  src = ./../../.;
+  src = fetchFromGitHub {
+    owner = "azuwis";
+    repo = pname;
+    rev = "v${version}";
+    sha256 = "sha256-6Otup1Yat1dBZdSoR4lDfpytUQ2RbDXC6ieo835Nw+U=";
+  };
 
-  propagatedBuildInputs = [
+  propagatedBuildInputs = with python3Packages; [
     piano-transcription-inference
     pytorch
     tkinter
@@ -22,15 +24,14 @@ buildPythonPackage rec {
   # Project has no tests
   doCheck = false;
 
-  makeWrapperArgs =
-    let
-      packagesToBinPath = [ ffmpeg ];
-    in
-    [ ''--prefix PATH : "${lib.makeBinPath packagesToBinPath}"'' ];
+  makeWrapperArgs = [
+    ''--prefix PATH : "${lib.makeBinPath [ ffmpeg ]}"''
+  ];
 
   meta = with lib; {
     description = "Simple GUI for ByteDance's Piano Transcription with Pedals";
     homepage = "https://github.com/azuwis/pianotrans";
+    license = licenses.mit;
     maintainers = with maintainers; [ azuwis ];
   };
 }

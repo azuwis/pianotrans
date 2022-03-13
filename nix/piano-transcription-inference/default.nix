@@ -4,9 +4,10 @@
 , fetchPypi
 , fetchpatch
 , fetchurl
+, librosa
 , matplotlib
 , mido
-, librosa
+, pytorch
 , torchlibrosa
 }:
 
@@ -21,14 +22,17 @@ buildPythonPackage rec {
 
   checkpoint = fetchurl {
     name = "piano-transcription-inference.pth";
+    # The download url can be found in
+    # https://github.com/qiuqiangkong/piano_transcription_inference/blob/master/piano_transcription_inference/inference.py
     url = "https://zenodo.org/record/4034264/files/CRNN_note_F1%3D0.9677_pedal_F1%3D0.9186.pth?download=1";
     sha256 = "sha256-w/qXMHJb9Kdi8cFLyAzVmG6s2gGwJvWkolJc1geHYUE=";
   };
 
   propagatedBuildInputs = [
+    librosa
     matplotlib
     mido
-    librosa
+    pytorch
     torchlibrosa
   ];
 
@@ -52,8 +56,14 @@ buildPythonPackage rec {
     cp "${checkpoint}" "$out/share/checkpoint.pth"
   '';
 
-  # Project has no tests
-  doCheck = false;
+  # Project has no tests.
+  # In order to make pythonImportsCheck work, NUMBA_CACHE_DIR env var need to
+  # be set to a writable dir (https://github.com/numba/numba/issues/4032#issuecomment-488102702).
+  # pythonImportsCheck has no pre* hook, use checkPhase to wordaround that.
+  checkPhase = ''
+    export NUMBA_CACHE_DIR="$(mktemp -d)"
+  '';
+  pythonImportsCheck = [ "piano_transcription_inference" ];
 
   meta = with lib; {
     description = "A piano transcription inference package";

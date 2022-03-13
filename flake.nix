@@ -14,19 +14,20 @@
             packageOverrides = final: prev: {
               torchlibrosa = python3Packages.callPackage ./nix/torchlibrosa { };
               piano-transcription-inference = python3Packages.callPackage ./nix/piano-transcription-inference { };
-              pianotrans = python3Packages.callPackage ./nix/pianotrans { };
             } // super.lib.optionalAttrs super.stdenv.isDarwin {
               pytorch = prev.pytorch-bin;
             };
           };
+          pianotrans = super.callPackage ./nix/pianotrans { };
           python3Packages = python3.pkgs;
         })];
       };
     in rec {
-      defaultPackage = with pkgs.python3Packages; toPythonApplication pianotrans;
+      defaultPackage = pkgs.pianotrans;
       devShell = pkgs.devshell.mkShell {
         packages = [
-          (pkgs.python3.withPackages(ps: [ ps.pianotrans ]))
+          (pkgs.python3.withPackages(ps: [ ps.piano-transcription-inference ]))
+          ffmpeg
         ];
       };
     });

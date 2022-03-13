@@ -3,8 +3,9 @@
 , buildPythonPackage
 , fetchPypi
 , fetchpatch
-, numpy
 , librosa
+, numpy
+, pytorch
 }:
 
 buildPythonPackage rec {
@@ -17,8 +18,9 @@ buildPythonPackage rec {
   };
 
   propagatedBuildInputs = [
-    numpy
     librosa
+    numpy
+    pytorch
   ];
 
   patches = [
@@ -29,8 +31,14 @@ buildPythonPackage rec {
     })
   ];
 
-  # Project has no tests
-  doCheck = false;
+  # Project has no tests.
+  # In order to make pythonImportsCheck work, NUMBA_CACHE_DIR env var need to
+  # be set to a writable dir (https://github.com/numba/numba/issues/4032#issuecomment-488102702).
+  # pythonImportsCheck has no pre* hook, use checkPhase to wordaround that.
+  checkPhase = ''
+    export NUMBA_CACHE_DIR="$(mktemp -d)"
+  '';
+  pythonImportsCheck = [ "torchlibrosa" ];
 
   meta = with lib; {
     description = "PyTorch implemention of part of librosa functions";
