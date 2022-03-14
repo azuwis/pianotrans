@@ -27,7 +27,7 @@
       devShell = pkgs.devshell.mkShell {
         packages = [
           (pkgs.python3.withPackages(ps: [ ps.piano-transcription-inference ]))
-          ffmpeg
+          pkgs.ffmpeg
         ];
       };
     });
