@@ -26,7 +26,10 @@
       defaultPackage = pkgs.pianotrans;
       devShell = pkgs.devshell.mkShell {
         packages = [
-          (pkgs.python3.withPackages(ps: [ ps.piano-transcription-inference ]))
+          (pkgs.python3.withPackages(ps: [
+            ps.piano-transcription-inference
+            ps.tkinter
+          ]))
           pkgs.ffmpeg
         ];
       };
