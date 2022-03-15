@@ -100,16 +100,13 @@ class Gui:
         self.textbox.insert('end', str)
         self.textbox.see('end')
 
-def usage():
-    command = sys.argv[0]
-    if os.path.isabs(command):
-        command = os.path.basename(command)
-    print ('''
-You can use pianotrans in console only environment:
-
-    {} file1 file2 ...'''.format(command))
-
 def main():
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-c', '--cli', action='store_true', help='Disable GUI')
+    parser.add_argument('file', nargs='+', help='File to transcribe')
+    args = parser.parse_args()
+
     checkpoint = None
     is_bundle = getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')
     if is_bundle:
@@ -119,8 +116,8 @@ def main():
         checkpoint = os.path.abspath(os.path.join(script_dir, 'piano_transcription_inference_data', 'note_F1=0.9677_pedal_F1=0.9186.pth'))
 
     transcribe = Transcribe(checkpoint=checkpoint)
-    files = tuple(sys.argv)[1:]
-    if not is_bundle and os.isatty(0) and len(files) > 0:
+    files = args.file
+    if (not is_bundle and os.isatty(0) and len(files)) or args.cli > 0:
         transcribe.enqueue(files)
         transcribe.queue.join()
     else:
@@ -129,7 +126,7 @@ def main():
             Gui(transcribe, files=files)
         except TclError as e:
             print ('Error open GUI: {}'.format(e))
-            usage()
+            parser.print_help()
 
 
 if __name__ == '__main__':
