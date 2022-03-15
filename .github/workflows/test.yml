@@ -1,0 +1,18 @@
+name: "Test"
+on:
+  pull_request:
+  push:
+jobs:
+  tests:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v2.4.0
+    - uses: cachix/install-nix-action@v16
+    - uses: cachix/cachix-action@v10
+      with:
+        name: azuwis
+        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+    - run: nix --print-build-logs develop --command ./PianoTrans.py --cli test/cut_liszt.opus && test -e test/cut_liszt.opus.mid
