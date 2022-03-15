@@ -1,7 +1,15 @@
 name: "Test"
 on:
   pull_request:
+    paths-ignore:
+    - '**.md'
+    - 'screenshots/**'
+    - 'windows/**'
   push:
+    paths-ignore:
+    - '**.md'
+    - 'screenshots/**'
+    - 'windows/**'
 jobs:
   tests:
     strategy:
