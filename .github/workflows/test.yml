@@ -10,6 +10,12 @@ on:
     - '**.md'
     - 'screenshots/**'
     - 'windows/**'
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        description: 'Enable upterm'
+        required: false
+        default: false
 jobs:
   tests:
     strategy:
@@ -63,9 +69,10 @@ jobs:
             sudo systemctl start nix-daemon
           fi
         fi
-    # - uses: lhotari/action-upterm@v1
-    #   with:
-    #     limit-access-to-actor: true
+    - uses: lhotari/action-upterm@v1
+      if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
+      with:
+        limit-access-to-actor: true
     - name: Test transcribe
       run: |
         nix --print-build-logs develop --profile /nix/var/nix/profiles/per-user/$USER/pianotrans --command ./PianoTrans.py --cli test/cut_liszt.opus
