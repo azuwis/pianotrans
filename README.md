@@ -1,5 +1,7 @@
 ## Simple GUI for ByteDance's Piano Transcription with Pedals
 
+[![Test](https://github.com/azuwis/pianotrans/actions/workflows/test.yml/badge.svg)](https://github.com/azuwis/pianotrans/actions/workflows/test.yml)
+
 [ByteDance's Piano Transcription][1] is the PyTorch implementation of the
 piano transcription system, "High-resolution Piano Transcription with Pedals
 by Regressing Onsets and Offsets Times `[1]`".
