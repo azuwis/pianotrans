@@ -19,8 +19,58 @@ jobs:
     steps:
     - uses: actions/checkout@v2.4.0
     - uses: cachix/install-nix-action@v16
+      with:
+        extra_nix_config: |
+          keep-derivations = true
+          keep-outputs = true
     - uses: cachix/cachix-action@v10
       with:
         name: azuwis
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-    - run: nix --print-build-logs develop --command ./PianoTrans.py --cli test/cut_liszt.opus && test -e test/cut_liszt.opus.mid
+        skipPush: true
+    - name: Cache nix store
+      id: cache-nix-store
+      uses: actions/cache@v2
+      with:
+        key: pianotrans2-${{ matrix.os }}-${{ hashFiles('flake.*', 'nix/**') }}
+        restore-keys: |
+          pianotrans2-${{ matrix.os }}-
+        path: |
+          nix_store_dir
+          nix_store_db.sqlite
+    - name: Restore cached nix store
+      run: |
+        if [ -e nix_store_db.sqlite ]; then
+          sudo systemctl stop nix-daemon
+          # put cached store paths back in their proper locations
+          sudo rm -rf /nix/store /nix/var/nix/db/db.sqlite
+          sudo mv nix_store_dir /nix/store
+          sudo mv nix_store_db.sqlite /nix/var/nix/db/db.sqlite
+          # fix store permissions
+          sudo chmod 1775 /nix/store
+          sudo chown root:nixbld /nix/store
+          sudo chmod 0644 /nix/var/nix/db/db.sqlite
+          sudo chown -R root:root /nix/store /nix/var/nix/db/db.sqlite
+          sudo systemctl start nix-daemon
+        fi
+    # - uses: lhotari/action-upterm@v1
+    #   with:
+    #     limit-access-to-actor: true
+    - name: Test transcribe
+      run: |
+        nix --print-build-logs develop --profile /nix/var/nix/profiles/per-user/$USER/pianotrans --command ./PianoTrans.py --cli test/cut_liszt.opus
+        rm /nix/var/nix/gcroots/per-user/$USER/* || true
+        for archive in $(nix flake archive --json | grep -E -o '/nix/store/[^"]+')
+        do
+          ln -fsn $archive "/nix/var/nix/gcroots/per-user/$USER/$(basename $archive)"
+        done
+        test -e test/cut_liszt.opus.mid
+    - name: Prepare nix store for caching
+      run: |
+        cachix push azuwis /nix/var/nix/profiles/per-user/$USER/pianotrans
+        # delete old stuff not relevant to this build
+        nix-collect-garbage -d
+        sudo systemctl stop nix-daemon
+        # move store to a place where the cache action can read it
+        sudo mv /nix/store nix_store_dir
+        sudo mv /nix/var/nix/db/db.sqlite nix_store_db.sqlite
