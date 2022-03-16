@@ -76,7 +76,6 @@ jobs:
     - name: Test transcribe
       run: |
         nix --print-build-logs develop --profile /nix/var/nix/profiles/per-user/$USER/pianotrans --command ./PianoTrans.py --cli test/cut_liszt.opus
-        rm /nix/var/nix/gcroots/per-user/$USER/* || true
         for archive in $(nix flake archive --json | grep -E -o '/nix/store/[^"]+')
         do
           ln -fsn $archive "/nix/var/nix/gcroots/per-user/$USER/$(basename $archive)"
