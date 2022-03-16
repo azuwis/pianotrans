@@ -56,11 +56,6 @@ jobs:
           sudo rm -rf /nix/store /nix/var/nix/db/db.sqlite
           sudo mv nix_store_dir /nix/store
           sudo mv nix_store_db.sqlite /nix/var/nix/db/db.sqlite
-          # fix store permissions
-          sudo chmod 1775 /nix/store
-          sudo chown root:nixbld /nix/store
-          sudo chmod 0644 /nix/var/nix/db/db.sqlite
-          sudo chown -R root:root /nix/store /nix/var/nix/db/db.sqlite
           if [ "$(uname)" = "Darwin" ]
           then
             sudo launchctl load -w /Library/LaunchDaemons/org.nixos.nix-daemon.plist
