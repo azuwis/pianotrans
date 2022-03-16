@@ -67,9 +67,10 @@ jobs:
         test -e test/cut_liszt.opus.mid
     - name: Prepare nix store for caching
       run: |
-        cachix push azuwis /nix/var/nix/profiles/per-user/$USER/pianotrans
         # delete old stuff not relevant to this build
         nix-collect-garbage -d
+        # push to cachix
+        cachix push azuwis /nix/var/nix/profiles/per-user/$USER/pianotrans
         sudo systemctl stop nix-daemon
         # move store to a place where the cache action can read it
         sudo mv /nix/store nix_store_dir
