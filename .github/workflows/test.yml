@@ -41,7 +41,12 @@ jobs:
     - name: Restore cached nix store
       run: |
         if [ -e nix_store_db.sqlite ]; then
-          sudo systemctl stop nix-daemon
+          if [ "$(uname)" = "Darwin" ]
+          then
+            sudo launchctl unload /Library/LaunchDaemons/org.nixos.nix-daemon.plist
+          else
+            sudo systemctl stop nix-daemon
+          fi
           # put cached store paths back in their proper locations
           sudo rm -rf /nix/store /nix/var/nix/db/db.sqlite
           sudo mv nix_store_dir /nix/store
@@ -51,7 +56,12 @@ jobs:
           sudo chown root:nixbld /nix/store
           sudo chmod 0644 /nix/var/nix/db/db.sqlite
           sudo chown -R root:root /nix/store /nix/var/nix/db/db.sqlite
-          sudo systemctl start nix-daemon
+          if [ "$(uname)" = "Darwin" ]
+          then
+            sudo launchctl load -w /Library/LaunchDaemons/org.nixos.nix-daemon.plist
+          else
+            sudo systemctl start nix-daemon
+          fi
         fi
     # - uses: lhotari/action-upterm@v1
     #   with:
@@ -71,7 +81,12 @@ jobs:
         nix-collect-garbage -d
         # push to cachix
         cachix push azuwis /nix/var/nix/profiles/per-user/$USER/pianotrans
-        sudo systemctl stop nix-daemon
+        if [ "$(uname)" = "Darwin" ]
+        then
+          sudo launchctl unload /Library/LaunchDaemons/org.nixos.nix-daemon.plist
+        else
+          sudo systemctl stop nix-daemon
+        fi
         # move store to a place where the cache action can read it
         sudo mv /nix/store nix_store_dir
         sudo mv /nix/var/nix/db/db.sqlite nix_store_db.sqlite
