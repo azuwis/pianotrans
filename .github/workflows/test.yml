@@ -36,6 +36,7 @@ jobs:
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
         skipPush: true
     - uses: actions/cache@v2
+      id: cache
       with:
         key: pianotrans2-${{ matrix.os }}-${{ hashFiles('flake.*', 'nix/**') }}
         restore-keys: |
@@ -75,12 +76,15 @@ jobs:
           ln -fsn $archive "/nix/var/nix/gcroots/per-user/$USER/$(basename $archive)"
         done
         test -e test/cut_liszt.opus.mid
-    - name: Prepare nix store for caching
+    - name: Push to cachix
       run: |
         # delete old stuff not relevant to this build
         nix-collect-garbage -d
         # push to cachix
         cachix push azuwis /nix/var/nix/profiles/per-user/$USER/pianotrans
+    - name: Prepare nix store for caching
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: |
         if [ "$(uname)" = "Darwin" ]
         then
           sudo launchctl unload /Library/LaunchDaemons/org.nixos.nix-daemon.plist
