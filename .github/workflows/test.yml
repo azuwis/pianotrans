@@ -14,6 +14,7 @@ on:
     inputs:
       debug_enabled:
         description: 'Enable upterm'
+        type: boolean
         required: false
         default: false
 jobs:
@@ -34,9 +35,7 @@ jobs:
         name: azuwis
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
         skipPush: true
-    - name: Cache nix store
-      id: cache-nix-store
-      uses: actions/cache@v2
+    - uses: actions/cache@v2
       with:
         key: pianotrans2-${{ matrix.os }}-${{ hashFiles('flake.*', 'nix/**') }}
         restore-keys: |
