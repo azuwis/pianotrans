@@ -74,19 +74,20 @@ jobs:
         limit-access-to-actor: true
     - name: Test transcribe
       run: |
-        nix --print-build-logs develop --profile /nix/var/nix/profiles/per-user/$USER/shell --command ./PianoTrans.py --cli test/cut_liszt.opus
+        nix --print-build-logs develop --profile /nix/var/nix/profiles/per-user/$USER/test --command ./PianoTrans.py --cli test/cut_liszt.opus
+        test -e test/cut_liszt.opus.mid
+    - name: Push to cachix
+      run: |
+        # create gcroots for flake sources to prevent gc
         for archive in $(nix flake archive --json | grep -E -o '/nix/store/[^"]+')
         do
           ln -fsn $archive "/nix/var/nix/gcroots/per-user/$USER/$(basename $archive)"
         done
-        test -e test/cut_liszt.opus.mid
-    - name: Push to cachix
-      run: |
         # delete old stuff not relevant to this build
         nix-collect-garbage -d
         # push to cachix
-        cachix push azuwis /nix/var/nix/profiles/per-user/$USER/shell
-    - name: Prepare for cache upload
+        cachix push azuwis /nix/var/nix/profiles/per-user/$USER/test
+    - name: Pre cache upload
       if: steps.cache.outputs.cache-hit != 'true'
       run: |
         if [ "$(uname)" = "Darwin" ]
