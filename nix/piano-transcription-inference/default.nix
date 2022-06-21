@@ -53,7 +53,7 @@ buildPythonPackage rec {
 
   postInstall = ''
     mkdir "$out/share"
-    cp "${checkpoint}" "$out/share/checkpoint.pth"
+    ln -s "${checkpoint}" "$out/share/checkpoint.pth"
   '';
 
   # Project has no tests.
