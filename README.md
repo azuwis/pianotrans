@@ -77,6 +77,14 @@ $ nix profile list
 [5]: https://www.7-zip.org/download.html
 [6]: https://github.com/qiuqiangkong/piano_transcription_inference
 
+### FAQ
+
+Q: Can you improve transcription result?
+
+A: This project is about packaging for https://github.com/bytedance/piano_transcription, as long as it gives you MIDI files, all other issues are out of scope of this project.
+
+You should report to the upstream project here https://github.com/bytedance/piano_transcription/issues
+
 ### Changelog
 
 #### [1.0] - 2022-02-21
