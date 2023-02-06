@@ -104,7 +104,7 @@ def main():
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--cli', action='store_true', help='Disable GUI')
-    parser.add_argument('file', nargs='+', help='File to transcribe')
+    parser.add_argument('file', nargs='*', help='File to transcribe')
     args = parser.parse_args()
 
     checkpoint = None
