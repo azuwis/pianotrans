@@ -117,7 +117,7 @@ def main():
 
     transcribe = Transcribe(checkpoint=checkpoint)
     files = args.file
-    if (not is_bundle and os.isatty(0) and len(files)) or args.cli > 0:
+    if (not is_bundle and os.isatty(0) and len(files) > 0) or args.cli:
         transcribe.enqueue(files)
         transcribe.queue.join()
     else:
