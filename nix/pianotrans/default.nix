@@ -17,7 +17,7 @@ python3Packages.buildPythonApplication rec {
 
   propagatedBuildInputs = with python3Packages; [
     piano-transcription-inference
-    pytorch
+    torch
     tkinter
   ];
 

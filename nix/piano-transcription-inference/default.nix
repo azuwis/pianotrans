@@ -7,7 +7,7 @@
 , librosa
 , matplotlib
 , mido
-, pytorch
+, torch
 , torchlibrosa
 }:
 
@@ -32,7 +32,7 @@ buildPythonPackage rec {
     librosa
     matplotlib
     mido
-    pytorch
+    torch
     torchlibrosa
   ];
 

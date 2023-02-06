@@ -5,7 +5,7 @@
 , fetchpatch
 , librosa
 , numpy
-, pytorch
+, torch
 }:
 
 buildPythonPackage rec {
@@ -20,7 +20,7 @@ buildPythonPackage rec {
   propagatedBuildInputs = [
     librosa
     numpy
-    pytorch
+    torch
   ];
 
   patches = [
