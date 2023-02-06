@@ -91,8 +91,7 @@ class Gui:
     def open(self):
         from tkinter import filedialog
         files = filedialog.askopenfilenames(
-                title='Hold {} to select multiple files'.format(self.ctrl),
-                filetypes = [('audio/video files', '*')])
+                title='Audio/video files, hold {} for multiple selection'.format(self.ctrl))
         files = self.root.tk.splitlist(files)
         self.transcribe.enqueue(files)
 
