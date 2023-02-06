@@ -1,21 +1,22 @@
 { lib
 , fetchFromGitHub
-, python3Packages
+, python3
 , ffmpeg
 }:
 
-python3Packages.buildPythonApplication rec {
+python3.pkgs.buildPythonApplication rec {
   pname = "pianotrans";
   version = "1.0";
+  format = "setuptools";
 
   src = fetchFromGitHub {
     owner = "azuwis";
     repo = pname;
     rev = "v${version}";
-    sha256 = "sha256-6Otup1Yat1dBZdSoR4lDfpytUQ2RbDXC6ieo835Nw+U=";
+    hash = "sha256-6Otup1Yat1dBZdSoR4lDfpytUQ2RbDXC6ieo835Nw+U=";
   };
 
-  propagatedBuildInputs = with python3Packages; [
+  propagatedBuildInputs = with python3.pkgs; [
     piano-transcription-inference
     torch
     tkinter
