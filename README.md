@@ -87,6 +87,13 @@ You should report to the upstream project here https://github.com/bytedance/pian
 
 ### Changelog
 
+#### [1.0.1] - 2023-02-09
+
+* Add `--cli` option to force disable GUI
+* Remove filetypes arg from askopenfilenames to avoid crash
+* Update Nix flake, and remove mido/soundfile/torchlibrosa/piano-transcription-inference overlay, all patches accepted in nixpkgs, this means more dependances can be fetched directly from Nix binary cache, less local builds
+* Add github test workflow
+
 #### [1.0] - 2022-02-21
 
 * Support Linux/macOS using Nix

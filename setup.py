@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="pianotrans",
-    version="1.0",
+    version="1.0.1",
     author="Zhong Jianxin",
     author_email="azuwis@gmail.com",
     description="Simple GUI for ByteDance's Piano Transcription with Pedals",
