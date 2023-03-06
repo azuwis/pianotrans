@@ -73,10 +73,10 @@ jobs:
     - name: Build nix dev env
       run: |
         # build nix dev env, and create profile to prevent gc
-        nix --print-build-logs develop --profile ./.env --command true
+        nix --print-build-logs develop --profile "/nix/var/nix/profiles/per-user/$USER/pianotrans" --command true
     - name: Test transcribe
       run: |
-        nix develop ./.env --command ./PianoTrans.py --cli test/cut_liszt.opus
+        nix --print-build-logs develop --profile "/nix/var/nix/profiles/per-user/$USER/pianotrans" --command ./PianoTrans.py --cli test/cut_liszt.opus
         test -e test/cut_liszt.opus.mid
     - name: Nix GC
       run: |
