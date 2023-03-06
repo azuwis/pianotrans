@@ -25,9 +25,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
-    - uses: cachix/install-nix-action@v20
+    - uses: nixbuild/nix-quick-install-action@v21
       with:
-        extra_nix_config: |
+        nix_conf: |
+          experimental-features = nix-command flakes
           keep-derivations = true
           keep-outputs = true
     - uses: cachix/cachix-action@v12
@@ -36,15 +37,8 @@ jobs:
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
     - name: Pre cache
       run: |
-        if [ "$(uname)" = "Darwin" ]
-        then
-          sudo launchctl unload /Library/LaunchDaemons/org.nixos.nix-daemon.plist
-        else
-          sudo systemctl stop nix-daemon
-        fi
-        sudo mv /nix/store /nix/store.bak
-        sudo mv /nix/var/nix/db/db.sqlite /nix/var/nix/db/db.sqlite.bak
-        sudo chown $USER /nix /nix/var/nix/db
+        mv /nix/store /nix/store.bak
+        mv /nix/var/nix/db/db.sqlite /nix/var/nix/db/db.sqlite.bak
     - uses: actions/cache@v3
       with:
         key: pianotrans3-${{ matrix.os }}-${{ hashFiles('flake.*', 'nix/**') }}
@@ -57,14 +51,8 @@ jobs:
       run: |
         if [ ! -e /nix/store ]
         then
-          sudo mv /nix/store.bak /nix/store
-          sudo mv /nix/var/nix/db/db.sqlite.bak /nix/var/nix/db/db.sqlite
-        fi
-        if [ "$(uname)" = "Darwin" ]
-        then
-          sudo launchctl load -w /Library/LaunchDaemons/org.nixos.nix-daemon.plist
-        else
-          sudo systemctl start nix-daemon
+          mv /nix/store.bak /nix/store
+          mv /nix/var/nix/db/db.sqlite.bak /nix/var/nix/db/db.sqlite
         fi
     - uses: lhotari/action-upterm@v1
       if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
