@@ -74,16 +74,16 @@ jobs:
       run: |
         # build nix dev env, and create profile to prevent gc
         nix --print-build-logs develop --profile "/nix/var/nix/profiles/per-user/$USER/pianotrans" --command true
+        # create gcroots for flake inputs to prevent gc
+        for archive in $(nix flake archive --json | grep -E -o '/nix/store/[^"]+')
+        do
+          ln -fsnv $archive "/nix/var/nix/gcroots/per-user/$USER/$(basename $archive)"
+        done
     - name: Test transcribe
       run: |
         nix --print-build-logs develop --profile "/nix/var/nix/profiles/per-user/$USER/pianotrans" --command ./PianoTrans.py --cli test/cut_liszt.opus
         test -e test/cut_liszt.opus.mid
     - name: Nix GC
       run: |
-        # create gcroots for flake inputs to prevent gc
-        for archive in $(nix flake archive --json | grep -E -o '/nix/store/[^"]+')
-        do
-          ln -fsn $archive "/nix/var/nix/gcroots/per-user/$USER/$(basename $archive)"
-        done
         # delete old stuff not relevant to this build
         nix-collect-garbage -d
