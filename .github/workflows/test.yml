@@ -55,7 +55,7 @@ jobs:
           mv /nix/var/nix/db/db.sqlite.bak /nix/var/nix/db/db.sqlite
         fi
     - uses: lhotari/action-upterm@v1
-      if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
+      if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
       with:
         limit-access-to-actor: true
     - name: Build nix dev env
