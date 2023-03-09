@@ -21,7 +21,7 @@ jobs:
   transcribe:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
@@ -63,19 +63,18 @@ jobs:
       if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
       with:
         limit-access-to-actor: true
-    - name: Build nix dev env
+    - name: tess torchBin
       run: |
-        # build nix dev env, and create profile to prevent gc
-        nix --print-build-logs develop --profile "/nix/var/nix/profiles/per-user/$USER/pianotrans" --command true
-        # create gcroots for flake inputs to prevent gc
-        for archive in $(nix flake archive --json | grep -E -o '/nix/store/[^"]+')
-        do
-          ln -fsnv $archive "/nix/var/nix/gcroots/per-user/$USER/$(basename $archive)"
-        done
-    - name: Test transcribe
+        nix shell -f pianotrans-tests.nix torchBin --command pianotrans --cli test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus | grep 'Transcribe time:'
+    - name: test mklDnnOn, no Accelerate.framework
       run: |
-        nix --print-build-logs develop --profile "/nix/var/nix/profiles/per-user/$USER/pianotrans" --command ./PianoTrans.py --cli test/cut_liszt.opus
-        test -e test/cut_liszt.opus.mid
+        nix shell github:nixos/nixpkgs/144ede9ee61ecfcc2d6b322398647e6908aa0db4#pianotrans --command pianotrans --cli test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus | grep 'Transcribe time:'
+    - name: test mklDnnOff, has Accelerate.framework
+      run: |
+        nix shell -f pianotrans-tests.nix mklDnnOff --command pianotrans --cli test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus | grep 'Transcribe time:'
+    - name: test mklDnnOn, has Accelerate.framework
+      run: |
+        nix shell -f pianotrans-tests.nix mklDnnOn --command pianotrans --cli test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus | grep 'Transcribe time:'
     - name: Nix GC
       run: |
         # delete old stuff not relevant to this build
