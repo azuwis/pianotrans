@@ -49,8 +49,13 @@ jobs:
           /nix/var/nix/db/db.sqlite
     - name: Post cache
       run: |
-        if [ ! -e /nix/store ]
+        if ! nix --version
         then
+          if [ -e /nix/store ]
+          then
+            # cache hit, but nix changed
+            mv /nix/store /nix/var/nix/db/db.sqlite /tmp
+          fi
           mv /nix/store.bak /nix/store
           mv /nix/var/nix/db/db.sqlite.bak /nix/var/nix/db/db.sqlite
         fi
