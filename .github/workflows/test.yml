@@ -37,8 +37,8 @@ jobs:
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
     - name: Pre cache
       run: |
-        mv /nix/store /nix/store.bak
-        mv /nix/var/nix/db/db.sqlite /nix/var/nix/db/db.sqlite.bak
+        mv -v /nix/store /nix/store.bak
+        mv -v /nix/var/nix/db/db.sqlite /nix/var/nix/db/db.sqlite.bak
     - uses: actions/cache@v3
       with:
         key: pianotrans3-${{ matrix.os }}-${{ hashFiles('flake.*', 'nix/**') }}
@@ -54,10 +54,10 @@ jobs:
           if [ -e /nix/store ]
           then
             # cache hit, but nix changed
-            mv /nix/store /nix/var/nix/db/db.sqlite /tmp
+            mv -v /nix/store /nix/var/nix/db/db.sqlite /tmp
           fi
-          mv /nix/store.bak /nix/store
-          mv /nix/var/nix/db/db.sqlite.bak /nix/var/nix/db/db.sqlite
+          mv -v /nix/store.bak /nix/store
+          mv -v /nix/var/nix/db/db.sqlite.bak /nix/var/nix/db/db.sqlite
         fi
     - uses: lhotari/action-upterm@v1
       if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
