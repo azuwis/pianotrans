@@ -39,11 +39,13 @@ jobs:
       run: |
         mv -v /nix/store /nix/store.bak
         mv -v /nix/var/nix/db/db.sqlite /nix/var/nix/db/db.sqlite.bak
-    - uses: actions/cache@v3
+    - name: Get current time
+      run: echo "CACHE_TIMESTAMP=$(date +%s)" >> $GITHUB_ENV
+    - uses: actions/cache/restore@v3
       with:
-        key: pianotrans3-${{ matrix.os }}-${{ hashFiles('flake.*', 'nix/**') }}
+        key: pianotrans3-${{ matrix.os }}-${{ hashFiles('flake.*', 'nix/**') }}-${{ env.CACHE_TIMESTAMP }}
         restore-keys: |
-          pianotrans3-${{ matrix.os }}-
+          pianotrans3-${{ matrix.os }}-${{ hashFiles('flake.*', 'nix/**') }}
         path: |
           /nix/store
           /nix/var/nix/db/db.sqlite
@@ -58,6 +60,7 @@ jobs:
           fi
           mv -v /nix/store.bak /nix/store
           mv -v /nix/var/nix/db/db.sqlite.bak /nix/var/nix/db/db.sqlite
+          echo "CACHE_NEED_UPDATE=yes" >> $GITHUB_ENV
         fi
     - uses: lhotari/action-upterm@v1
       if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
@@ -80,3 +83,10 @@ jobs:
       run: |
         # delete old stuff not relevant to this build
         nix-collect-garbage -d
+    - uses: actions/cache/save@v3
+      if: ${{ env.CACHE_NEED_UPDATE == 'yes' }}
+      with:
+        key: pianotrans3-${{ matrix.os }}-${{ hashFiles('flake.*', 'nix/**') }}-${{ env.CACHE_TIMESTAMP }}
+        path: |
+          /nix/store
+          /nix/var/nix/db/db.sqlite
