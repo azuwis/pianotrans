@@ -69,10 +69,10 @@ jobs:
     - name: Build nix devShells
       run: |
         # build nix devShells, and create profile to prevent gc
-        echo "Build nix devShell.#"
-        nix --print-build-logs develop --profile "/nix/var/nix/profiles/per-user/$USER/pianotrans" --command true
-        echo "Build nix devShell.#bin"
-        nix --print-build-logs develop .#bin --profile "/nix/var/nix/profiles/per-user/$USER/pianotrans-bin" --command true
+        echo "Build nix devShell.#shell"
+        nix --print-build-logs develop --profile "/nix/var/nix/profiles/per-user/$USER/shell" --command true
+        echo "Build nix devShell.#shell-bin"
+        nix --print-build-logs develop .#shell-bin --profile "/nix/var/nix/profiles/per-user/$USER/shell-bin" --command true
         # create gcroots for flake inputs to prevent gc
         for archive in $(nix flake archive --json | grep -E -o '/nix/store/[^"]+')
         do
@@ -80,11 +80,11 @@ jobs:
         done
     - name: Test transcribe with nixpkgs#torch
       run: |
-        nix --print-build-logs develop --command ./PianoTrans.py --cli test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus
+        nix --print-build-logs develop .#shell --command ./PianoTrans.py --cli test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus
         test -e test/cut_liszt.opus.mid
     - name: Test transcribe with nixpkgs#torch-bin
       run: |
-        nix --print-build-logs develop .#bin --command ./PianoTrans.py --cli test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus
+        nix --print-build-logs develop .#shell-bin --command ./PianoTrans.py --cli test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus
         test -e test/cut_liszt.opus.mid
     - name: Nix GC
       run: |

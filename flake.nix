@@ -12,37 +12,39 @@
     inputs.flake-utils.lib.eachDefaultSystem (system: let
       pkgs = inputs.nixpkgs.legacyPackages.${system};
       devshell = import inputs.devshell { inherit system; nixpkgs = pkgs; };
-      pianotrans = pkgs.callPackage ./nix/pianotrans { };
       python3 = pkgs.python3.override {
         packageOverrides = self: super: {
           torch = super.torch-bin;
         };
       };
+      pianotrans = pkgs.callPackage ./nix/pianotrans { };
       pianotrans-bin = pianotrans.override { inherit python3; };
+      shell = devshell.mkShell {
+        packages = [
+          (pkgs.python3.withPackages(ps: [
+            ps.piano-transcription-inference
+            ps.tkinter
+          ]))
+          pkgs.ffmpeg
+        ];
+      };
+      shell-bin = devshell.mkShell {
+        packages = [
+          (python3.withPackages(ps: [
+            ps.piano-transcription-inference
+            ps.tkinter
+          ]))
+          pkgs.ffmpeg
+        ];
+      };
     in {
       packages = {
         default = if pkgs.stdenv.isx86_64 then pianotrans-bin else pianotrans;
         inherit pianotrans pianotrans-bin;
       };
       devShells = {
-        default = devshell.mkShell {
-          packages = [
-            (pkgs.python3.withPackages(ps: [
-              ps.piano-transcription-inference
-              ps.tkinter
-            ]))
-            pkgs.ffmpeg
-          ];
-        };
-        bin = devshell.mkShell {
-          packages = [
-            (python3.withPackages(ps: [
-              ps.piano-transcription-inference
-              ps.tkinter
-            ]))
-            pkgs.ffmpeg
-          ];
-        };
+        default = if pkgs.stdenv.isx86_64 then shell-bin else shell;
+        inherit shell shell-bin;
       };
     });
 }
