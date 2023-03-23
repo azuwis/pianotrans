@@ -5,6 +5,9 @@
   inputs.devshell.inputs.nixpkgs.follows = "nixpkgs";
   inputs.devshell.inputs.flake-utils.follows = "flake-utils";
 
+  nixConfig.extra-substituters = [ "https://azuwis.cachix.org" ];
+  nixConfig.extra-trusted-public-keys = [ "azuwis.cachix.org-1:194mFftt8RhaRjVyUrq8ttZCvYFwecVO+D5SC75d+9E=" ];
+
   outputs = inputs@{ ... }:
     inputs.flake-utils.lib.eachDefaultSystem (system: let
       pkgs = inputs.nixpkgs.legacyPackages.${system};
