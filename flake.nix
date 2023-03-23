@@ -5,26 +5,24 @@
   inputs.devshell.inputs.nixpkgs.follows = "nixpkgs";
   inputs.devshell.inputs.flake-utils.follows = "flake-utils";
 
-  outputs = { self, nixpkgs, flake-utils, devshell }:
-    flake-utils.lib.eachDefaultSystem (system: let
-      pkgs = import nixpkgs {
-        inherit system;
-        overlays = [ devshell.overlay (self: super: rec {
-          python3 = super.python3.override {
-            packageOverrides = final: prev: {
-              # torchlibrosa = python3Packages.callPackage ./nix/torchlibrosa { };
-              # piano-transcription-inference = python3Packages.callPackage ./nix/piano-transcription-inference { };
-            } // super.lib.optionalAttrs super.stdenv.isDarwin {
-              torch = prev.torch-bin;
-            };
+  outputs = inputs@{ ... }:
+    inputs.flake-utils.lib.eachDefaultSystem (system: let
+      pkgs = inputs.nixpkgs.legacyPackages.${system};
+      devshell = import inputs.devshell { inherit system; nixpkgs = pkgs; };
+      pianotrans = pkgs.callPackage ./nix/pianotrans { };
+      pianotrans-bin = pianotrans.override {
+        python3 = pkgs.python3.override {
+          packageOverrides = self: super: {
+            torch = super.torch-bin;
           };
-          pianotrans = super.callPackage ./nix/pianotrans { };
-          python3Packages = python3.pkgs;
-        })];
+        };
       };
-    in rec {
-      defaultPackage = pkgs.pianotrans;
-      devShell = pkgs.devshell.mkShell {
+    in {
+      packages = {
+        default = pianotrans;
+        inherit pianotrans pianotrans-bin;
+      };
+      devShell = devshell.mkShell {
         packages = [
           (pkgs.python3.withPackages(ps: [
             ps.piano-transcription-inference
