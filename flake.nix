@@ -10,26 +10,36 @@
       pkgs = inputs.nixpkgs.legacyPackages.${system};
       devshell = import inputs.devshell { inherit system; nixpkgs = pkgs; };
       pianotrans = pkgs.callPackage ./nix/pianotrans { };
-      pianotrans-bin = pianotrans.override {
-        python3 = pkgs.python3.override {
-          packageOverrides = self: super: {
-            torch = super.torch-bin;
-          };
+      python3 = pkgs.python3.override {
+        packageOverrides = self: super: {
+          torch = super.torch-bin;
         };
       };
+      pianotrans-bin = pianotrans.override { inherit python3; };
     in {
       packages = {
         default = pianotrans;
         inherit pianotrans pianotrans-bin;
       };
-      devShell = devshell.mkShell {
-        packages = [
-          (pkgs.python3.withPackages(ps: [
-            ps.piano-transcription-inference
-            ps.tkinter
-          ]))
-          pkgs.ffmpeg
-        ];
+      devShells = {
+        default = devshell.mkShell {
+          packages = [
+            (pkgs.python3.withPackages(ps: [
+              ps.piano-transcription-inference
+              ps.tkinter
+            ]))
+            pkgs.ffmpeg
+          ];
+        };
+        bin = devshell.mkShell {
+          packages = [
+            (python3.withPackages(ps: [
+              ps.piano-transcription-inference
+              ps.tkinter
+            ]))
+            pkgs.ffmpeg
+          ];
+        };
       };
     });
 }
