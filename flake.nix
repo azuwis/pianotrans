@@ -18,7 +18,7 @@
       pianotrans-bin = pianotrans.override { inherit python3; };
     in {
       packages = {
-        default = pianotrans;
+        default = if pkgs.stdenv.isx86_64 then pianotrans-bin else pianotrans;
         inherit pianotrans pianotrans-bin;
       };
       devShells = {
