@@ -28,6 +28,7 @@ jobs:
     - uses: nixbuild/nix-quick-install-action@v21
       with:
         nix_conf: |
+          accept-flake-config = true
           experimental-features = nix-command flakes
           keep-derivations = true
           keep-outputs = true
