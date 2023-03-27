@@ -55,7 +55,8 @@ also follow the upstream [install and usage][6] guide for Python pip instead.
    ``` sh
    nix profile install github:azuwis/pianotrans
    ```
-4. Run `pianotrans` to open the GUI, choose audio/video files, hold `⌘` to select multiple files
+4. Run `pianotrans` to open the GUI, choose audio/video files, hold `CTRL`
+   (`⌘` for macOS) to select multiple files
 
 For CLI usage, run `pianotrans file1 file2 ...`.
 
