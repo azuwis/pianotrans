@@ -70,7 +70,7 @@ jobs:
       run: |
         # build nix devShells, and create profile to prevent gc
         echo "Build nix devShell.#shell"
-        nix --print-build-logs develop --profile "/nix/var/nix/profiles/per-user/$USER/shell" --command true
+        nix --print-build-logs develop .#shell --profile "/nix/var/nix/profiles/per-user/$USER/shell" --command true
         echo "Build nix devShell.#shell-bin"
         nix --print-build-logs develop .#shell-bin --profile "/nix/var/nix/profiles/per-user/$USER/shell-bin" --command true
         # create gcroots for flake inputs to prevent gc
