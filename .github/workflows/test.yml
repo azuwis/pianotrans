@@ -25,7 +25,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
-    - uses: nixbuild/nix-quick-install-action@v21
+    - uses: nixbuild/nix-quick-install-action@v26
       with:
         nix_conf: |
           accept-flake-config = true
@@ -69,16 +69,12 @@ jobs:
         limit-access-to-actor: true
     - name: Build nix devShells
       run: |
+        mkdir -p ~/.local/state/nix/profiles
         # build nix devShells, and create profile to prevent gc
         echo "Build nix devShell.#shell"
-        nix --print-build-logs develop .#shell --profile "/nix/var/nix/profiles/per-user/$USER/shell" --command true
+        nix --print-build-logs develop .#shell --profile ~/.local/state/nix/profiles/shell --command true
         echo "Build nix devShell.#shell-bin"
-        nix --print-build-logs develop .#shell-bin --profile "/nix/var/nix/profiles/per-user/$USER/shell-bin" --command true
-        # create gcroots for flake inputs to prevent gc
-        for archive in $(nix flake archive --json | grep -E -o '/nix/store/[^"]+')
-        do
-          ln -fsnv $archive "/nix/var/nix/gcroots/per-user/$USER/$(basename $archive)"
-        done
+        nix --print-build-logs develop .#shell-bin --profile ~/.local/state/nix/profiles/shell-bin --command true
     - name: Test transcribe with nixpkgs#torch
       run: |
         nix --print-build-logs develop .#shell --command ./PianoTrans.py --cli test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus
@@ -89,6 +85,11 @@ jobs:
         test -e test/cut_liszt.opus.mid
     - name: Nix GC
       run: |
+        # create gcroots for flake inputs to prevent gc
+        for archive in $(nix flake archive --json | grep -E -o '/nix/store/[^"]+')
+        do
+          ln -fsnv $archive ~/.local/state/nix/profiles/"$(basename $archive)"
+        done
         # delete old stuff not relevant to this build
         nix-collect-garbage -d
     - uses: actions/cache/save@v3
