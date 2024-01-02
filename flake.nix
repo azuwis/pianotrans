@@ -16,7 +16,11 @@
       packages = eachSystem (system:
         let
           pkgs = inputs.nixpkgs.legacyPackages.${system};
-          python3-bin = pkgs.python3.override {
+          pkgsUnfree = import inputs.nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+          };
+          python3-bin = pkgsUnfree.python3.override {
             packageOverrides = self: super: {
               torch = super.torch-bin;
             };
