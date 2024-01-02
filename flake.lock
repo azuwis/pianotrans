@@ -2,49 +2,34 @@
   "nodes": {
     "devshell": {
       "inputs": {
-        "flake-utils": [
-          "flake-utils"
-        ],
         "nixpkgs": [
           "nixpkgs"
+        ],
+        "systems": [
+          "systems"
         ]
       },
       "locked": {
-        "lastModified": 1678957337,
-        "narHash": "sha256-Gw4nVbuKRdTwPngeOZQOzH/IFowmz4LryMPDiJN/ah4=",
+        "lastModified": 1698410321,
+        "narHash": "sha256-MphuSlgpmKwtJncGMohryHiK55J1n6WzVQ/OAfmfoMc=",
         "owner": "numtide",
         "repo": "devshell",
-        "rev": "3e0e60ab37cd0bf7ab59888f5c32499d851edb47",
+        "rev": "1aed986e3c81a4f6698e85a7452cbfcc4b31a36e",
         "type": "github"
       },
       "original": {
         "owner": "numtide",
         "repo": "devshell",
-        "type": "github"
-      }
-    },
-    "flake-utils": {
-      "locked": {
-        "lastModified": 1678901627,
-        "narHash": "sha256-U02riOqrKKzwjsxc/400XnElV+UtPUQWpANPlyazjH0=",
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "rev": "93a2b84fc4b70d9e089d029deacc3583435c2ed6",
-        "type": "github"
-      },
-      "original": {
-        "owner": "numtide",
-        "repo": "flake-utils",
         "type": "github"
       }
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1678875422,
-        "narHash": "sha256-T3o6NcQPwXjxJMn2shz86Chch4ljXgZn746c2caGxd8=",
+        "lastModified": 1699343069,
+        "narHash": "sha256-s7BBhyLA6MI6FuJgs4F/SgpntHBzz40/qV0xLPW6A1Q=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "126f49a01de5b7e35a43fd43f891ecf6d3a51459",
+        "rev": "ec750fd01963ab6b20ee1f0cb488754e8036d89d",
         "type": "github"
       },
       "original": {
@@ -57,8 +42,23 @@
     "root": {
       "inputs": {
         "devshell": "devshell",
-        "flake-utils": "flake-utils",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "systems": "systems"
+      }
+    },
+    "systems": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
       }
     }
   },
