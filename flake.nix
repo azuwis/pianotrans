@@ -42,6 +42,7 @@
             packages = [
               (pkgs.python3.withPackages (ps: [
                 ps.piano-transcription-inference
+                ps.resampy
                 ps.tkinter
               ]))
               pkgs.ffmpeg
@@ -51,6 +52,7 @@
             packages = [
               (self.packages.${system}.python3-bin.withPackages (ps: [
                 ps.piano-transcription-inference
+                ps.resampy
                 ps.tkinter
               ]))
               pkgs.ffmpeg
