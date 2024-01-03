@@ -26,51 +26,19 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
-    - uses: nixbuild/nix-quick-install-action@v26
+    - uses: azuwis/nix-action@main
       with:
-        nix_conf: |
-          accept-flake-config = true
-          experimental-features = nix-command flakes
-          keep-derivations = true
-          keep-outputs = true
+        key: pianotrans-${{ matrix.shell }}-${{ hashFiles('flake.*', 'nix/**') }}
     - uses: cachix/cachix-action@v12
       with:
         name: azuwis
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-    - name: Pre cache
-      run: |
-        mv -v /nix/store /nix/store.bak
-        mv -v /nix/var/nix/db/db.sqlite /nix/var/nix/db/db.sqlite.bak
-    - name: Get current time
-      run: echo "CACHE_TIMESTAMP=$(date +%s)" >> $GITHUB_ENV
-    - uses: actions/cache/restore@v3
-      with:
-        key: pianotrans-${{ matrix.os }}-${{ matrix.shell }}-${{ hashFiles('flake.*', 'nix/**') }}-${{ env.CACHE_TIMESTAMP }}
-        restore-keys: |
-          pianotrans-${{ matrix.os }}-${{ matrix.shell }}-${{ hashFiles('flake.*', 'nix/**') }}
-        path: |
-          /nix/store
-          /nix/var/nix/db/db.sqlite
-    - name: Post cache
-      run: |
-        if ! nix --version
-        then
-          if [ -e /nix/store ]
-          then
-            # cache hit, but nix changed
-            mv -v /nix/store /nix/var/nix/db/db.sqlite /tmp
-          fi
-          mv -v /nix/store.bak /nix/store
-          mv -v /nix/var/nix/db/db.sqlite.bak /nix/var/nix/db/db.sqlite
-          echo "CACHE_NEED_UPDATE=yes" >> $GITHUB_ENV
-        fi
     - uses: lhotari/action-upterm@v1
       if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
       with:
         limit-access-to-actor: true
     - name: Build nix devShell
       run: |
-        mkdir -p ~/.local/state/nix/profiles
         # build nix devShell, and create profile to prevent gc
         echo "Build nix devShell"
         nix --print-build-logs develop .#${{ matrix.shell }} --profile ~/.local/state/nix/profiles/shell --command true
@@ -78,19 +46,4 @@ jobs:
       run: |
         nix --print-build-logs develop .#${{ matrix.shell }} --command ./PianoTrans.py --cli test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus
         test -e test/cut_liszt.opus.mid
-    - name: Nix GC
-      run: |
-        # create gcroots for flake inputs to prevent gc
-        for archive in $(nix flake archive --json | grep -E -o '/nix/store/[^"]+')
-        do
-          ln -fsnv $archive ~/.local/state/nix/profiles/"$(basename $archive)"
-        done
-        # delete old stuff not relevant to this build
-        nix-collect-garbage -d
-    - uses: actions/cache/save@v3
-      if: ${{ env.CACHE_NEED_UPDATE == 'yes' }}
-      with:
-        key: pianotrans-${{ matrix.os }}-${{ matrix.shell }}-${{ hashFiles('flake.*', 'nix/**') }}-${{ env.CACHE_TIMESTAMP }}
-        path: |
-          /nix/store
-          /nix/var/nix/db/db.sqlite
+    - uses: azuwis/nix-action@post
