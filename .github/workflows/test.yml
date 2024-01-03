@@ -1,4 +1,4 @@
-name: "Test"
+name: Test
 on:
   pull_request:
     paths-ignore:
@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
     inputs:
       debug_enabled:
-        description: 'Enable debug'
+        description: Enable debug
         type: boolean
         required: false
         default: false
@@ -29,22 +29,20 @@ jobs:
     - uses: azuwis/nix-action@main
       with:
         key: pianotrans-${{ matrix.shell }}-${{ hashFiles('flake.*', 'nix/**') }}
+        debug: ${{ inputs.debug_enabled }}
+        credential: ${{ secrets.TTYD_CREDENTIAL }}
     - uses: cachix/cachix-action@v12
       with:
         name: azuwis
-        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+        authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
         pushFilter: (-source$|\.whl$)
-    - uses: lhotari/action-upterm@v1
-      if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
-      with:
-        limit-access-to-actor: true
     - name: Build nix devShell
       run: |
         # build nix devShell, and create profile to prevent gc
         echo "Build nix devShell"
-        nix --print-build-logs develop .#${{ matrix.shell }} --profile ~/.local/state/nix/profiles/shell --command true
+        nix -L develop .#${{ matrix.shell }} --profile ~/.local/state/nix/profiles/shell --command true
     - name: Test transcribe
       run: |
-        nix --print-build-logs develop .#${{ matrix.shell }} --command ./PianoTrans.py --cli test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus
+        nix -L develop .#${{ matrix.shell }} --command ./PianoTrans.py --cli test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus
         test -e test/cut_liszt.opus.mid
     - uses: azuwis/nix-action@post
