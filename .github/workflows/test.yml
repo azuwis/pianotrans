@@ -1,4 +1,5 @@
 name: Test
+permissions: {}
 on:
   pull_request:
     paths-ignore:
