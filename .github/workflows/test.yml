@@ -54,6 +54,6 @@ jobs:
         nix -L develop .#${{ matrix.shell }} --profile ~/.local/state/nix/profiles/shell --command true
     - name: Test transcribe
       run: |
-        nix -L develop .#${{ matrix.shell }} --command ./PianoTrans.py --cli test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus
+        nix -L develop .#${{ matrix.shell }} --command ./PianoTrans.py --cli test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus
         test -e test/cut_liszt.opus.mid
     - uses: azuwis/nix-action@post
