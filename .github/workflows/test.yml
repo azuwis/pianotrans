@@ -17,6 +17,11 @@ on:
         type: boolean
         required: false
         default: false
+      os:
+        description: Debug OS
+        required: true
+        type: choice
+        options: [ubuntu-latest, macos-latest, all]
 jobs:
   transcribe:
     strategy:
@@ -29,7 +34,12 @@ jobs:
     - uses: azuwis/nix-action@main
       with:
         key: pianotrans-${{ matrix.shell }}-${{ hashFiles('flake.*', 'nix/**') }}
-        debug: ${{ github.event_name == 'workflow_dispatch' && inputs.debug }}
+        debug: >-
+          ${{ github.event_name == 'workflow_dispatch'
+              && inputs.debug
+              && matrix.shell == 'shell'
+              && (inputs.os == 'all'|| inputs.os == matrix.os)
+          }}
         credential: ${{ secrets.TTYD_CREDENTIAL }}
     - uses: cachix/cachix-action@v12
       with:
