@@ -25,6 +25,7 @@ on:
 jobs:
   transcribe:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
         shell: [shell, shell-bin]
