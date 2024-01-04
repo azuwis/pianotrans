@@ -46,7 +46,7 @@ jobs:
       with:
         name: azuwis
         authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
-        pushFilter: (-source$|\.whl$)
+        # pushFilter: (-source$|\.whl$)
     - name: Build nix devShell
       run: |
         # build nix devShell, and create profile to prevent gc
