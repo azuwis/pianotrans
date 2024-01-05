@@ -32,16 +32,17 @@ jobs:
         shell: [shell, shell-bin]
     runs-on: ${{ matrix.os }}
     steps:
+    - name: Skip run if debug enabled and job not matched
+      if: >-
+        ${{ github.event_name == 'workflow_dispatch' && inputs.debug && !
+            ((inputs.os == 'all' || inputs.os == matrix.os) && matrix.shell == 'shell')
+        }}
+      run: exit 1
     - uses: actions/checkout@v3
     - uses: azuwis/nix-action@main
       with:
         key: pianotrans-${{ matrix.shell }}-${{ hashFiles('flake.*', 'nix/**') }}
-        debug: >-
-          ${{ github.event_name == 'workflow_dispatch'
-              && inputs.debug
-              && matrix.shell == 'shell'
-              && (inputs.os == 'all'|| inputs.os == matrix.os)
-          }}
+        debug: ${{ github.event_name == 'workflow_dispatch' && inputs.debug }}
         credential: ${{ secrets.TTYD_CREDENTIAL }}
     - uses: cachix/cachix-action@v12
       with:
