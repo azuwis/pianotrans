@@ -22,13 +22,13 @@ on:
         description: Debug OS
         required: true
         type: choice
-        options: [ubuntu-latest, macos-latest, all]
+        options: [ubuntu-latest, macos-13, all]
 jobs:
   transcribe:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-13]
         shell: [shell, shell-bin]
     runs-on: ${{ matrix.os }}
     steps:
