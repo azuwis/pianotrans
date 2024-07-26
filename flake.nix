@@ -6,14 +6,18 @@
   inputs.devshell.inputs.systems.follows = "systems";
 
   nixConfig.extra-substituters = [ "https://azuwis.cachix.org" ];
-  nixConfig.extra-trusted-public-keys = [ "azuwis.cachix.org-1:194mFftt8RhaRjVyUrq8ttZCvYFwecVO+D5SC75d+9E=" ];
+  nixConfig.extra-trusted-public-keys = [
+    "azuwis.cachix.org-1:194mFftt8RhaRjVyUrq8ttZCvYFwecVO+D5SC75d+9E="
+  ];
 
-  outputs = inputs@{ self, ... }:
+  outputs =
+    inputs@{ self, ... }:
     let
       eachSystem = inputs.nixpkgs.lib.genAttrs (import inputs.systems);
     in
     {
-      packages = eachSystem (system:
+      packages = eachSystem (
+        system:
         let
           pkgs = inputs.nixpkgs.legacyPackages.${system};
           pkgsUnfree = import inputs.nixpkgs {
@@ -21,9 +25,7 @@
             config.allowUnfree = true;
           };
           python3-bin = pkgsUnfree.python3.override {
-            packageOverrides = self: super: {
-              torch = super.torch-bin;
-            };
+            packageOverrides = self: super: { torch = super.torch-bin; };
           };
           pianotrans = pkgs.callPackage ./nix/pianotrans { };
           pianotrans-bin = pianotrans.override { python3 = python3-bin; };
@@ -34,10 +36,14 @@
         }
       );
 
-      devShells = eachSystem (system:
+      devShells = eachSystem (
+        system:
         let
           pkgs = inputs.nixpkgs.legacyPackages.${system};
-          devshell = import inputs.devshell { inherit system; nixpkgs = pkgs; };
+          devshell = import inputs.devshell {
+            inherit system;
+            nixpkgs = pkgs;
+          };
           shell = devshell.mkShell {
             packages = [
               (pkgs.python3.withPackages (ps: [
