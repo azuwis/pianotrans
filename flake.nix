@@ -39,7 +39,7 @@
           pianotrans-bin = pianotrans.override { python3 = python3-bin; };
         in
         {
-          default = if pkgs.stdenv.isx86_64 then pianotrans-bin else pianotrans;
+          default = pianotrans;
           inherit pianotrans pianotrans-bin python3-bin;
         }
       );
@@ -74,7 +74,7 @@
           };
         in
         {
-          default = if pkgs.stdenv.isx86_64 then shell-bin else shell;
+          default = shell;
           inherit shell shell-bin;
         }
       );
