@@ -1,9 +1,17 @@
 {
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-  inputs.systems.url = "github:nix-systems/default";
-  inputs.devshell.url = "github:numtide/devshell";
-  inputs.devshell.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.devshell.inputs.systems.follows = "systems";
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    systems.url = "github:nix-systems/default";
+    flake-utils.url = "github:numtide/flake-utils";
+    flake-utils.inputs.systems.follows = "systems";
+    devshell = {
+      url = "github:numtide/devshell";
+      inputs = {
+        flake-utils.follows = "flake-utils";
+        nixpkgs.follows = "nixpkgs";
+      };
+    };
+  };
 
   nixConfig.extra-substituters = [ "https://azuwis.cachix.org" ];
   nixConfig.extra-trusted-public-keys = [
