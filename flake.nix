@@ -27,39 +27,62 @@
       packages = eachSystem (
         system:
         let
-          pkgs = inputs.nixpkgs.legacyPackages.${system};
-          pkgsUnfree = import inputs.nixpkgs {
+          pkgs = import inputs.nixpkgs {
             inherit system;
             config.allowUnfree = true;
           };
-          python3-bin = pkgsUnfree.python3.override {
+          python3-bin = pkgs.python3.override {
             packageOverrides = self: super: { torch = super.torch-bin; };
           };
           pianotrans = pkgs.callPackage ./nix/pianotrans { };
           pianotrans-bin = pianotrans.override { python3 = python3-bin; };
+          pianotrans-mkl =
+            let
+              inherit (pkgs) runCommand makeWrapper;
+            in
+            runCommand "pianotrans" { buildInputs = [ makeWrapper ]; } ''
+              makeWrapper ${pianotrans}/bin/pianotrans $out/bin/pianotrans \
+                --set LD_PRELOAD "${pkgs.mkl}/lib/libblas.so"
+            '';
         in
         {
           default = pianotrans;
-          inherit pianotrans pianotrans-bin python3-bin;
+          inherit
+            pianotrans
+            pianotrans-bin
+            pianotrans-mkl
+            python3-bin
+            ;
         }
       );
 
       devShells = eachSystem (
         system:
         let
-          pkgs = inputs.nixpkgs.legacyPackages.${system};
+          pkgs = import inputs.nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+          };
           devshell = import inputs.devshell {
             inherit system;
             nixpkgs = pkgs;
           };
-          shell = devshell.mkShell {
-            packages = [
-              (pkgs.python3.withPackages (ps: [
-                ps.piano-transcription-inference
-                ps.resampy
-                ps.tkinter
-              ]))
-              pkgs.ffmpeg
+          packages = [
+            (pkgs.python3.withPackages (ps: [
+              ps.piano-transcription-inference
+              ps.resampy
+              ps.tkinter
+            ]))
+            pkgs.ffmpeg
+          ];
+          shell = devshell.mkShell { inherit packages; };
+          shell-mkl = devshell.mkShell {
+            inherit packages;
+            env = [
+              {
+                name = "LD_PRELOAD";
+                value = "${pkgs.mkl}/lib/libblas.so";
+              }
             ];
           };
           shell-bin = devshell.mkShell {
@@ -75,7 +98,7 @@
         in
         {
           default = shell;
-          inherit shell shell-bin;
+          inherit shell shell-bin shell-mkl;
         }
       );
     };
