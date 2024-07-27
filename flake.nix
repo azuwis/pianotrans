@@ -26,9 +26,18 @@
         python3-bin = pkgs.python3.override {
           packageOverrides = self: super: { torch = super.torch-bin; };
         };
+        python3-cuda = pkgs.python3.override {
+          packageOverrides = self: super: {
+            torch = super.torch.override {
+              openai-triton = super.openai-triton-cuda;
+              cudaSupport = true;
+            };
+          };
+        };
 
         pianotrans = pkgs.callPackage ./nix/pianotrans { };
         pianotrans-bin = pianotrans.override { python3 = python3-bin; };
+        pianotrans-cuda = pianotrans.override { python3 = python3-cuda; };
         pianotrans-mkl =
           let
             inherit (pkgs) runCommand makeWrapper;
@@ -53,6 +62,7 @@
 
         shell = devshell.mkShell { packages = mkShellPkgs pkgs.python3; };
         shell-bin = devshell.mkShell { packages = mkShellPkgs python3-bin; };
+        shell-cuda = devshell.mkShell { packages = mkShellPkgs python3-cuda; };
         shell-mkl = devshell.mkShell {
           packages = mkShellPkgs pkgs.python3;
           env = [
@@ -69,13 +79,20 @@
           inherit
             pianotrans
             pianotrans-bin
+            pianotrans-cuda
             pianotrans-mkl
             python3-bin
+            python3-cuda
             ;
         };
         devShells = {
           default = shell;
-          inherit shell shell-bin shell-mkl;
+          inherit
+            shell
+            shell-bin
+            shell-cuda
+            shell-mkl
+            ;
         };
       }
     );
