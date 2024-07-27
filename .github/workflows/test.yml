@@ -42,12 +42,12 @@ jobs:
             ((inputs.os == 'all' || inputs.os == matrix.os) && matrix.shell == 'shell')
         }}
       run: exit 1
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: azuwis/actions/nix@main
       with:
         key: nix-${{ matrix.shell }}
         debug: ${{ github.event_name == 'workflow_dispatch' && inputs.debug }}
-    - uses: cachix/cachix-action@v12
+    - uses: cachix/cachix-action@v15
       with:
         name: azuwis
         authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
