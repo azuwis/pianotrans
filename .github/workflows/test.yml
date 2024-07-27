@@ -29,8 +29,10 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-12]
-        shell: [shell, shell-bin]
-        exclude: [{os: macos-12, shell: shell-bin}]
+        shell: [shell]
+        include:
+        - {os: ubuntu-latest, shell: shell-bin}
+        - {os: ubuntu-latest, shell: shell-mkl}
     runs-on: ${{ matrix.os }}
     steps:
     - name: Skip debug
