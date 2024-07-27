@@ -42,8 +42,8 @@
           inherit system;
           nixpkgs = pkgs;
         };
-        packages = [
-          (pkgs.python3.withPackages (ps: [
+        mkShellPkgs = python: [
+          (python.withPackages (ps: [
             ps.piano-transcription-inference
             ps.resampy
             ps.tkinter
@@ -51,24 +51,15 @@
           pkgs.ffmpeg
         ];
 
-        shell = devshell.mkShell { inherit packages; };
+        shell = devshell.mkShell { packages = mkShellPkgs pkgs.python3; };
+        shell-bin = devshell.mkShell { packages = mkShellPkgs python3-bin; };
         shell-mkl = devshell.mkShell {
-          inherit packages;
+          packages = mkShellPkgs pkgs.python3;
           env = [
             {
               name = "LD_PRELOAD";
               value = blas;
             }
-          ];
-        };
-        shell-bin = devshell.mkShell {
-          packages = [
-            (python3-bin.withPackages (ps: [
-              ps.piano-transcription-inference
-              ps.resampy
-              ps.tkinter
-            ]))
-            pkgs.ffmpeg
           ];
         };
       in
