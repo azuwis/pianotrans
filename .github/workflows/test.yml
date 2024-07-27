@@ -32,6 +32,7 @@ jobs:
         shell: [shell]
         include:
         - {os: ubuntu-latest, shell: shell-bin}
+        - {os: ubuntu-latest, shell: shell-cuda}
         - {os: ubuntu-latest, shell: shell-mkl}
     runs-on: ${{ matrix.os }}
     steps:
