@@ -7,10 +7,16 @@
     };
   };
 
-  nixConfig.extra-substituters = [ "https://azuwis.cachix.org" ];
-  nixConfig.extra-trusted-public-keys = [
-    "azuwis.cachix.org-1:194mFftt8RhaRjVyUrq8ttZCvYFwecVO+D5SC75d+9E="
-  ];
+  nixConfig = {
+    extra-substituters = [
+      "https://azuwis.cachix.org"
+      "https://cuda-maintainers.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "azuwis.cachix.org-1:194mFftt8RhaRjVyUrq8ttZCvYFwecVO+D5SC75d+9E="
+      "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
+    ];
+  };
 
   outputs =
     inputs@{ ... }:
