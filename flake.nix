@@ -5,6 +5,7 @@
       url = "github:numtide/devshell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    flake-utils.url = "github:numtide/flake-utils";
   };
 
   nixConfig = {
@@ -20,7 +21,7 @@
 
   outputs =
     inputs@{ ... }:
-    inputs.devshell.inputs.flake-utils.lib.eachDefaultSystem (
+    inputs.flake-utils.lib.eachDefaultSystem (
       system:
       let
         pkgs = import inputs.nixpkgs {
