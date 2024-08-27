@@ -51,7 +51,7 @@ jobs:
       with:
         name: azuwis
         authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
-        extraPullNames: cuda-maintainers
+        extraPullNames: nix-community
         # pushFilter: (-source$|\.whl$)
     - name: Build nix devShell
       run: |

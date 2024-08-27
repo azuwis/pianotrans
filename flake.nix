@@ -1,6 +1,7 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    # https://hydra.nix-community.org/jobset/nixpkgs/cuda
+    nixpkgs.url = "github:NixOS/nixpkgs/ac2df85f4d5c580786c7b4db031c199554152681";
     devshell = {
       url = "github:numtide/devshell";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -11,11 +12,11 @@
   nixConfig = {
     extra-substituters = [
       "https://azuwis.cachix.org"
-      "https://cuda-maintainers.cachix.org"
+      "https://nix-community.cachix.org"
     ];
     extra-trusted-public-keys = [
       "azuwis.cachix.org-1:194mFftt8RhaRjVyUrq8ttZCvYFwecVO+D5SC75d+9E="
-      "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
     ];
   };
 
@@ -29,18 +30,19 @@
           config.allowUnfree = true;
         };
 
+        pkgsCuda = import inputs.nixpkgs {
+          inherit system;
+          config = {
+            allowUnfree = true;
+            cudaSupport = true;
+          };
+        };
+
         blas = "${pkgs.mkl}/lib/libblas.so";
         python3-bin = pkgs.python3.override {
           packageOverrides = self: super: { torch = super.torch-bin; };
         };
-        python3-cuda = pkgs.python3.override {
-          packageOverrides = self: super: {
-            torch = super.torch.override {
-              openai-triton = super.openai-triton-cuda;
-              cudaSupport = true;
-            };
-          };
-        };
+        python3-cuda = pkgsCuda.python3;
 
         pianotrans = pkgs.callPackage ./nix/pianotrans { };
         pianotrans-bin = pianotrans.override { python3 = python3-bin; };
