@@ -87,8 +87,6 @@
             pianotrans-bin
             pianotrans-cuda
             pianotrans-mkl
-            python3-bin
-            python3-cuda
             ;
         };
         devShells = {
