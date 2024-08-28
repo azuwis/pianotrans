@@ -62,6 +62,8 @@ jobs:
         nix -L develop .#${{ matrix.shell }} --profile ~/.local/state/nix/profiles/shell --command true
     - name: Test transcribe
       run: |
-        nix -L develop .#${{ matrix.shell }} --command ./PianoTrans.py --cli test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus
+        nix -L develop .#${{ matrix.shell }} --command ./PianoTrans.py --cli test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus | tee /tmp/transcribe.log
+        time=$(awk 'BEGIN {ORS=" "} /Transcribe time:/ {print $3}' /tmp/transcribe.log)
+        echo "::notice::Transcribe time: $time"
         test -e test/cut_liszt.opus.mid
     - uses: azuwis/actions/nix/post@main
