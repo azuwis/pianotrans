@@ -31,9 +31,7 @@ jobs:
         os: [ubuntu-latest, macos-12, macos-latest]
         shell: [shell]
         include:
-        # error: triton-2.1.0 not supported for interpreter python3.12
-        # re-enable after https://github.com/NixOS/nixpkgs/pull/328247 merged
-        # - {os: ubuntu-latest, shell: shell-bin}
+        - {os: ubuntu-latest, shell: shell-bin}
         - {os: ubuntu-latest, shell: shell-cuda}
         - {os: ubuntu-latest, shell: shell-mkl}
     runs-on: ${{ matrix.os }}
