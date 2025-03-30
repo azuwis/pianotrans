@@ -98,30 +98,25 @@
             pkgs.ffmpeg
           ];
           shell = devshell.mkShell { packages = mkShellPkgs pkgs.python3; };
+          wrapBlas =
+            blas:
+            devshell.mkShell {
+              packages = mkShellPkgs pkgs.python3;
+              env = [
+                {
+                  name = "LD_PRELOAD";
+                  value = "${blas}/lib/libblas.so";
+                }
+              ];
+            };
         in
         {
           inherit shell;
           default = shell;
           shell-bin = devshell.mkShell { packages = mkShellPkgs python3-bin; };
-          shell-blis = devshell.mkShell {
-            packages = mkShellPkgs pkgs.python3;
-            env = [
-              {
-                name = "LD_PRELOAD";
-                value = "${pkgs.blis}/lib/libblas.so";
-              }
-            ];
-          };
+          shell-blis = wrapBlas pkgs.blis;
           shell-cuda = devshell.mkShell { packages = mkShellPkgs python3-cuda; };
-          shell-mkl = devshell.mkShell {
-            packages = mkShellPkgs pkgs.python3;
-            env = [
-              {
-                name = "LD_PRELOAD";
-                value = "${pkgs.mkl}/lib/libblas.so";
-              }
-            ];
-          };
+          shell-mkl = wrapBlas pkgs.mkl;
         }
       );
     };
