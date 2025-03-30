@@ -19,34 +19,65 @@ on:
         required: false
         default: false
       os:
-        description: Debug OS
-        required: true
+        description: OS to run
         type: choice
-        options: [ubuntu-latest, macos-13, macos-latest, all]
+        options:
+          - linux
+          - darwin
+          - aarch64-linux
+          - x86_64-linux
+          - aarch64-darwin
+          - x86_64-darwin
+          - all
+        default: all
+      shell:
+        description: Variant to run
+        type: choice
+        options:
+          - shell
+          - shell-bin
+          - shell-cuda
+          - shell-mkl
+          - all
+        default: all
 jobs:
   transcribe:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-13, macos-latest]
-        shell: [shell]
-        include:
-        - {os: ubuntu-latest, shell: shell-bin}
-        - {os: ubuntu-latest, shell: shell-cuda}
-        - {os: ubuntu-latest, shell: shell-mkl}
+        os: >-
+          ${{ fromJSON(
+            inputs.os == 'linux' && '["ubuntu-latest", "ubuntu-24.04-arm"]' || (
+            inputs.os == 'darwin' && '["macos-latest", "macos-13"]' || (
+            inputs.os == 'aarch64-linux' && '["ubuntu-24.04-arm"]' || (
+            inputs.os == 'x86_64-linux' && '["ubuntu-latest"]' || (
+            inputs.os == 'aarch64-darwin' && '["macos-latest"]' || (
+            inputs.os == 'x86_64-darwin' && '["macos-13"]' || (
+            '["ubuntu-24.04-arm", "ubuntu-latest", "macos-latest", "macos-13"]'
+          ))))))) }}
+        shell: >-
+          ${{ fromJSON(
+            inputs.os == 'shell' && '["shell"]' || (
+            inputs.os == 'shell-bin' && '["shell-bin"]' || (
+            inputs.os == 'shell-cuda' && '["shell-cuda"]' || (
+            inputs.os == 'shell-mkl' && '["shell-mkl"]' || (
+            '["shell", "shell-bin", "shell-cuda", "shell-mkl"]'
+          ))))) }}
+        exclude:
+        - {shell: shell-bin, os: macos-13}
+        - {shell: shell-cuda, os: ubuntu-24.04-arm}
+        - {shell: shell-cuda, os: macos-latest}
+        - {shell: shell-cuda, os: macos-13}
+        - {shell: shell-mkl, os: ubuntu-24.04-arm}
+        - {shell: shell-mkl, os: macos-latest}
+        - {shell: shell-mkl, os: macos-13}
     runs-on: ${{ matrix.os }}
     steps:
-    - name: Skip debug
-      if: >-
-        ${{ github.event_name == 'workflow_dispatch' && inputs.debug && !
-            ((inputs.os == 'all' || inputs.os == matrix.os) && matrix.shell == 'shell')
-        }}
-      run: exit 1
     - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
     - uses: azuwis/actions/nix@main
       with:
         key: nix-${{ matrix.shell }}
-        debug: ${{ github.event_name == 'workflow_dispatch' && inputs.debug }}
+        debug: ${{ inputs.debug }}
     - uses: cachix/cachix-action@0fc020193b5a1fa3ac4575aa3a7d3aa6a35435ad # v16
       with:
         name: azuwis
