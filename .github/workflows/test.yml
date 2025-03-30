@@ -30,14 +30,14 @@ on:
           - x86_64-darwin
           - all
         default: all
-      shell:
+      pianotrans:
         description: Variant to run
         type: choice
         options:
-          - shell
-          - shell-bin
-          - shell-cuda
-          - shell-mkl
+          - pianotrans
+          - pianotrans-bin
+          - pianotrans-cuda
+          - pianotrans-mkl
           - all
         default: all
 jobs:
@@ -55,29 +55,29 @@ jobs:
             inputs.os == 'x86_64-darwin' && '["macos-13"]' || (
             '["ubuntu-24.04-arm", "ubuntu-latest", "macos-latest", "macos-13"]'
           ))))))) }}
-        shell: >-
+        pianotrans: >-
           ${{ fromJSON(
-            inputs.os == 'shell' && '["shell"]' || (
-            inputs.os == 'shell-bin' && '["shell-bin"]' || (
-            inputs.os == 'shell-cuda' && '["shell-cuda"]' || (
-            inputs.os == 'shell-mkl' && '["shell-mkl"]' || (
-            '["shell", "shell-bin", "shell-cuda", "shell-mkl"]'
+            inputs.os == 'pianotrans' && '["pianotrans"]' || (
+            inputs.os == 'pianotrans-bin' && '["pianotrans-bin"]' || (
+            inputs.os == 'pianotrans-cuda' && '["pianotrans-cuda"]' || (
+            inputs.os == 'pianotrans-mkl' && '["pianotrans-mkl"]' || (
+            '["pianotrans", "pianotrans-bin", "pianotrans-cuda", "pianotrans-mkl"]'
           ))))) }}
         exclude:
-        - {os: macos-13, shell: shell-bin}
-        - {os: macos-13, shell: shell-cuda}
-        - {os: macos-13, shell: shell-mkl}
-        - {os: macos-latest, shell: shell-cuda}
-        - {os: macos-latest, shell: shell-mkl}
-        - {os: ubuntu-24.04-arm, shell: shell-bin} # nccl(cuda on arm?) takes > 1h to build
-        - {os: ubuntu-24.04-arm, shell: shell-cuda}
-        - {os: ubuntu-24.04-arm, shell: shell-mkl}
+        - {os: macos-13, pianotrans: pianotrans-bin}
+        - {os: macos-13, pianotrans: pianotrans-cuda}
+        - {os: macos-13, pianotrans: pianotrans-mkl}
+        - {os: macos-latest, pianotrans: pianotrans-cuda}
+        - {os: macos-latest, pianotrans: pianotrans-mkl}
+        - {os: ubuntu-24.04-arm, pianotrans: pianotrans-bin} # nccl(cuda on arm?) takes > 1h to build
+        - {os: ubuntu-24.04-arm, pianotrans: pianotrans-cuda}
+        - {os: ubuntu-24.04-arm, pianotrans: pianotrans-mkl}
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
     - uses: azuwis/actions/nix@main
       with:
-        key: nix-${{ matrix.shell }}
+        key: nix-${{ matrix.pianotrans }}
         debug: ${{ inputs.debug }}
     - uses: cachix/cachix-action@0fc020193b5a1fa3ac4575aa3a7d3aa6a35435ad # v16
       with:
@@ -85,14 +85,16 @@ jobs:
         authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
         extraPullNames: nix-community
         # pushFilter: (-source$|\.whl$)
-    - name: Build nix devShell
+    - name: Build pianotrans
+      env:
+        PIANOTRANS: ${{ matrix.pianotrans }}
       run: |
-        # build nix devShell, and create profile to prevent gc
-        echo "Build nix devShell"
-        nix -L develop .#${{ matrix.shell }} --profile ~/.local/state/nix/profiles/shell --command true
+        # build pianotrans, and create profile to prevent gc
+        echo "Build $PIANOTRANS"
+        nix -L build ".#$PIANOTRANS" --profile ~/.local/state/nix/profiles/pianotrans
     - name: Test transcribe
       run: |
-        nix -L develop .#${{ matrix.shell }} --command ./PianoTrans.py --cli test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus | tee /tmp/transcribe.log
+        ~/.local/state/nix/profiles/pianotrans/bin/pianotrans --cli test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus | tee /tmp/transcribe.log
         time=$(awk 'BEGIN {ORS=" "} /Transcribe time:/ {print $3}' /tmp/transcribe.log)
         echo "::notice::Transcribe time: $time"
         test -e test/cut_liszt.opus.mid
