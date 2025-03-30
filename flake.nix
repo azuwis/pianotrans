@@ -74,6 +74,7 @@
           inherit pianotrans;
           default = pianotrans;
           pianotrans-bin = pianotrans.override { python3 = python3-bin; };
+          pianotrans-blis = wrapBlas pkgs.blis;
           pianotrans-cuda = pianotrans.override { python3 = python3-cuda; };
           pianotrans-mkl = wrapBlas pkgs.mkl;
         }
@@ -102,6 +103,15 @@
           inherit shell;
           default = shell;
           shell-bin = devshell.mkShell { packages = mkShellPkgs python3-bin; };
+          shell-blis = devshell.mkShell {
+            packages = mkShellPkgs pkgs.python3;
+            env = [
+              {
+                name = "LD_PRELOAD";
+                value = "${pkgs.blis}/lib/libblas.so";
+              }
+            ];
+          };
           shell-cuda = devshell.mkShell { packages = mkShellPkgs python3-cuda; };
           shell-mkl = devshell.mkShell {
             packages = mkShellPkgs pkgs.python3;
