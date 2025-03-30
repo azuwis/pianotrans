@@ -69,6 +69,7 @@ jobs:
         - {os: macos-13, shell: shell-mkl}
         - {os: macos-latest, shell: shell-cuda}
         - {os: macos-latest, shell: shell-mkl}
+        - {os: ubuntu-24.04-arm, shell: shell-bin} # nccl(cuda on arm?) takes > 1h to build
         - {os: ubuntu-24.04-arm, shell: shell-cuda}
         - {os: ubuntu-24.04-arm, shell: shell-mkl}
     runs-on: ${{ matrix.os }}
