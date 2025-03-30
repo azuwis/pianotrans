@@ -61,19 +61,21 @@
           python3-cuda,
           ...
         }:
-        rec {
-          default = pianotrans;
+        let
           pianotrans = pkgs.callPackage ./nix/pianotrans { };
+          wrapBlas =
+            blas:
+            pkgs.runCommand "pianotrans" { buildInputs = [ pkgs.makeWrapper ]; } ''
+              makeWrapper ${pianotrans}/bin/pianotrans $out/bin/pianotrans \
+                --set LD_PRELOAD "${blas}/lib/libblas.so"
+            '';
+        in
+        {
+          inherit pianotrans;
+          default = pianotrans;
           pianotrans-bin = pianotrans.override { python3 = python3-bin; };
           pianotrans-cuda = pianotrans.override { python3 = python3-cuda; };
-          pianotrans-mkl =
-            let
-              inherit (pkgs) runCommand makeWrapper;
-            in
-            runCommand "pianotrans" { buildInputs = [ makeWrapper ]; } ''
-              makeWrapper ${pianotrans}/bin/pianotrans $out/bin/pianotrans \
-                --set LD_PRELOAD "${pkgs.mkl}/lib/libblas.so"
-            '';
+          pianotrans-mkl = wrapBlas pkgs.mkl;
         }
       );
 
@@ -94,10 +96,11 @@
             ]))
             pkgs.ffmpeg
           ];
-        in
-        rec {
-          default = shell;
           shell = devshell.mkShell { packages = mkShellPkgs pkgs.python3; };
+        in
+        {
+          inherit shell;
+          default = shell;
           shell-bin = devshell.mkShell { packages = mkShellPkgs python3-bin; };
           shell-cuda = devshell.mkShell { packages = mkShellPkgs python3-cuda; };
           shell-mkl = devshell.mkShell {
