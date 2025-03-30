@@ -64,13 +64,13 @@ jobs:
             '["shell", "shell-bin", "shell-cuda", "shell-mkl"]'
           ))))) }}
         exclude:
-        - {shell: shell-bin, os: macos-13}
-        - {shell: shell-cuda, os: ubuntu-24.04-arm}
-        - {shell: shell-cuda, os: macos-latest}
-        - {shell: shell-cuda, os: macos-13}
-        - {shell: shell-mkl, os: ubuntu-24.04-arm}
-        - {shell: shell-mkl, os: macos-latest}
-        - {shell: shell-mkl, os: macos-13}
+        - {os: macos-13, shell: shell-bin}
+        - {os: macos-13, shell: shell-cuda}
+        - {os: macos-13, shell: shell-mkl}
+        - {os: macos-latest, shell: shell-cuda}
+        - {os: macos-latest, shell: shell-mkl}
+        - {os: ubuntu-24.04-arm, shell: shell-cuda}
+        - {os: ubuntu-24.04-arm, shell: shell-mkl}
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
