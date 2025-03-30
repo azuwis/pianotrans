@@ -35,7 +35,9 @@ on:
         type: choice
         options:
           - pianotrans
+          - pianotrans-amd-blis
           - pianotrans-bin
+          - pianotrans-blis
           - pianotrans-cuda
           - pianotrans-mkl
           - all
@@ -58,18 +60,26 @@ jobs:
         pianotrans: >-
           ${{ fromJSON(
             inputs.os == 'pianotrans' && '["pianotrans"]' || (
+            inputs.os == 'pianotrans-amd-blis' && '["pianotrans-amd-blis"]' || (
             inputs.os == 'pianotrans-bin' && '["pianotrans-bin"]' || (
+            inputs.os == 'pianotrans-blis' && '["pianotrans-blis"]' || (
             inputs.os == 'pianotrans-cuda' && '["pianotrans-cuda"]' || (
             inputs.os == 'pianotrans-mkl' && '["pianotrans-mkl"]' || (
-            '["pianotrans", "pianotrans-bin", "pianotrans-cuda", "pianotrans-mkl"]'
-          ))))) }}
+            '["pianotrans", "pianotrans-amd-blis", "pianotrans-bin", "pianotrans-blis", "pianotrans-cuda", "pianotrans-mkl"]'
+          ))))))) }}
         exclude:
+        - {os: macos-13, pianotrans: pianotrans-amd-blis}
+        - {os: macos-13, pianotrans: pianotrans-blis}
         - {os: macos-13, pianotrans: pianotrans-bin}
         - {os: macos-13, pianotrans: pianotrans-cuda}
         - {os: macos-13, pianotrans: pianotrans-mkl}
+        - {os: macos-latest, pianotrans: pianotrans-amd-blis}
+        - {os: macos-latest, pianotrans: pianotrans-blis}
         - {os: macos-latest, pianotrans: pianotrans-cuda}
         - {os: macos-latest, pianotrans: pianotrans-mkl}
+        - {os: ubuntu-24.04-arm, pianotrans: pianotrans-amd-blis}
         - {os: ubuntu-24.04-arm, pianotrans: pianotrans-bin} # nccl(cuda on arm?) takes > 1h to build
+        - {os: ubuntu-24.04-arm, pianotrans: pianotrans-blis}
         - {os: ubuntu-24.04-arm, pianotrans: pianotrans-cuda}
         - {os: ubuntu-24.04-arm, pianotrans: pianotrans-mkl}
     runs-on: ${{ matrix.os }}
