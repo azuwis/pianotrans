@@ -75,6 +75,7 @@
           default = pianotrans;
           pianotrans-bin = pianotrans.override { python3 = python3-bin; };
           pianotrans-blis = wrapBlas pkgs.blis;
+          pianotrans-amd-blis = wrapBlas pkgs.amd-blis;
           pianotrans-cuda = pianotrans.override { python3 = python3-cuda; };
           pianotrans-mkl = wrapBlas pkgs.mkl;
         }
@@ -113,6 +114,7 @@
         {
           inherit shell;
           default = shell;
+          shell-amd-blis = wrapBlas pkgs.amd-blis;
           shell-bin = devshell.mkShell { packages = mkShellPkgs python3-bin; };
           shell-blis = wrapBlas pkgs.blis;
           shell-cuda = devshell.mkShell { packages = mkShellPkgs python3-cuda; };
