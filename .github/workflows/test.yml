@@ -106,6 +106,13 @@ jobs:
       run: |
         ~/.local/state/nix/profiles/pianotrans/bin/pianotrans --cli test/cut_liszt.opus test/cut_liszt.opus test/cut_liszt.opus | tee /tmp/transcribe.log
         time=$(awk 'BEGIN {ORS=" "} /Transcribe time:/ {print $3}' /tmp/transcribe.log)
-        echo "::notice::Transcribe time: $time"
-        test -e test/cut_liszt.opus.mid
+        file=test/cut_liszt.opus.mid
+        if [ "$RUNNER_OS" = macOS ]; then
+          size=$(stat -f %z "$file")
+        else
+          size=$(stat -c %s "$file")
+        fi
+        md5=$(md5sum "$file" | cut -d ' ' -f 1)
+        echo "::notice::Time/Size/MD5: $time / $size / $md5"
+        test -e "$file"
     - uses: azuwis/actions/nix/post@main
