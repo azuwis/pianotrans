@@ -50,12 +50,12 @@ jobs:
         os: >-
           ${{ fromJSON(
             inputs.os == 'linux' && '["ubuntu-latest", "ubuntu-24.04-arm"]' || (
-            inputs.os == 'darwin' && '["macos-latest", "macos-13"]' || (
+            inputs.os == 'darwin' && '["macos-latest", "macos-15-intel"]' || (
             inputs.os == 'aarch64-linux' && '["ubuntu-24.04-arm"]' || (
             inputs.os == 'x86_64-linux' && '["ubuntu-latest"]' || (
             inputs.os == 'aarch64-darwin' && '["macos-latest"]' || (
-            inputs.os == 'x86_64-darwin' && '["macos-13"]' || (
-            '["ubuntu-24.04-arm", "ubuntu-latest", "macos-latest", "macos-13"]'
+            inputs.os == 'x86_64-darwin' && '["macos-15-intel"]' || (
+            '["ubuntu-24.04-arm", "ubuntu-latest", "macos-latest", "macos-15-intel"]'
           ))))))) }}
         pianotrans: >-
           ${{ fromJSON(
@@ -68,11 +68,11 @@ jobs:
             '["pianotrans", "pianotrans-amd-blis", "pianotrans-bin", "pianotrans-blis", "pianotrans-cuda", "pianotrans-mkl"]'
           ))))))) }}
         exclude:
-        - {os: macos-13, pianotrans: pianotrans-amd-blis}
-        - {os: macos-13, pianotrans: pianotrans-blis}
-        - {os: macos-13, pianotrans: pianotrans-bin}
-        - {os: macos-13, pianotrans: pianotrans-cuda}
-        - {os: macos-13, pianotrans: pianotrans-mkl}
+        - {os: macos-15-intel, pianotrans: pianotrans-amd-blis}
+        - {os: macos-15-intel, pianotrans: pianotrans-blis}
+        - {os: macos-15-intel, pianotrans: pianotrans-bin}
+        - {os: macos-15-intel, pianotrans: pianotrans-cuda}
+        - {os: macos-15-intel, pianotrans: pianotrans-mkl}
         - {os: macos-latest, pianotrans: pianotrans-amd-blis}
         - {os: macos-latest, pianotrans: pianotrans-blis}
         - {os: macos-latest, pianotrans: pianotrans-cuda}
