@@ -93,7 +93,6 @@ jobs:
       with:
         name: azuwis
         authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
-        extraPullNames: nix-community
         # pushFilter: (-source$|\.whl$)
     - name: Build pianotrans
       env:
