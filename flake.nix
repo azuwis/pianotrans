@@ -1,7 +1,7 @@
 {
   inputs = {
-    # nixos-25.05-small cuda https://hydra.nix-community.org/jobset/nixpkgs/cuda-stable
-    nixpkgs.url = "github:NixOS/nixpkgs/f26539a240e6d435f0bdce49df7c4bb253f3f913";
+    # https://hydra.nixos-cuda.org/jobset/nixos-cuda/cuda-packages-stable
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     devshell = {
       url = "github:numtide/devshell";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -11,11 +11,11 @@
   nixConfig = {
     extra-substituters = [
       "https://azuwis.cachix.org"
-      "https://nix-community.cachix.org"
+      "https://cache.nixos-cuda.org"
     ];
     extra-trusted-public-keys = [
       "azuwis.cachix.org-1:194mFftt8RhaRjVyUrq8ttZCvYFwecVO+D5SC75d+9E="
-      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
     ];
   };
 
