@@ -62,7 +62,8 @@
           ...
         }:
         let
-          pianotrans = pkgs.callPackage ./nix/pianotrans { };
+          # pianotrans = pkgs.callPackage ./nix/pianotrans { };
+          pianotrans = pkgs.pianotrans;
           wrapBlas =
             blas:
             pkgs.runCommand "pianotrans" { buildInputs = [ pkgs.makeWrapper ]; } ''
