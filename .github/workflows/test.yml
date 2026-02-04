@@ -40,6 +40,7 @@ on:
           - pianotrans-blis
           - pianotrans-cuda
           - pianotrans-mkl
+          - pianotrans-rocm
           - all
         default: all
 jobs:
@@ -65,23 +66,27 @@ jobs:
             inputs.os == 'pianotrans-blis' && '["pianotrans-blis"]' || (
             inputs.os == 'pianotrans-cuda' && '["pianotrans-cuda"]' || (
             inputs.os == 'pianotrans-mkl' && '["pianotrans-mkl"]' || (
-            '["pianotrans", "pianotrans-amd-blis", "pianotrans-bin", "pianotrans-blis", "pianotrans-cuda", "pianotrans-mkl"]'
-          ))))))) }}
+            inputs.os == 'pianotrans-rocm' && '["pianotrans-rocm"]' || (
+            '["pianotrans", "pianotrans-amd-blis", "pianotrans-bin", "pianotrans-blis", "pianotrans-cuda", "pianotrans-mkl", "pianotrans-rocm"]'
+          )))))))) }}
         exclude:
         - {os: macos-15-intel, pianotrans: pianotrans-amd-blis}
         - {os: macos-15-intel, pianotrans: pianotrans-blis}
         - {os: macos-15-intel, pianotrans: pianotrans-bin}
         - {os: macos-15-intel, pianotrans: pianotrans-cuda}
         - {os: macos-15-intel, pianotrans: pianotrans-mkl}
+        - {os: macos-15-intel, pianotrans: pianotrans-rocm}
         - {os: macos-latest, pianotrans: pianotrans-amd-blis}
         - {os: macos-latest, pianotrans: pianotrans-blis}
         - {os: macos-latest, pianotrans: pianotrans-cuda}
         - {os: macos-latest, pianotrans: pianotrans-mkl}
+        - {os: macos-latest, pianotrans: pianotrans-rocm}
         - {os: ubuntu-24.04-arm, pianotrans: pianotrans-amd-blis}
         - {os: ubuntu-24.04-arm, pianotrans: pianotrans-bin} # nccl(cuda on arm?) takes > 1h to build
         - {os: ubuntu-24.04-arm, pianotrans: pianotrans-blis}
         - {os: ubuntu-24.04-arm, pianotrans: pianotrans-cuda}
         - {os: ubuntu-24.04-arm, pianotrans: pianotrans-mkl}
+        - {os: ubuntu-24.04-arm, pianotrans: pianotrans-rocm}
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1

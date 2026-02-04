@@ -50,6 +50,14 @@
                   cudaSupport = true;
                 };
               }).python3;
+            python3-rocm =
+              (import inputs.nixpkgs {
+                inherit system;
+                config = {
+                  allowUnfree = true;
+                  rocmSupport = true;
+                };
+              }).python3;
           }
         );
     in
@@ -59,6 +67,7 @@
           pkgs,
           python3-bin,
           python3-cuda,
+          python3-rocm,
           ...
         }:
         let
@@ -79,6 +88,7 @@
           pianotrans-amd-blis = wrapBlas pkgs.amd-blis;
           pianotrans-cuda = pianotrans.override { python3 = python3-cuda; };
           pianotrans-mkl = wrapBlas pkgs.mkl;
+          pianotrans-rocm = pianotrans.override { python3 = python3-rocm; };
         }
       );
 
@@ -88,6 +98,7 @@
           devshell,
           python3-bin,
           python3-cuda,
+          python3-rocm,
           ...
         }:
         let
@@ -120,6 +131,7 @@
           shell-blis = wrapBlas pkgs.blis;
           shell-cuda = devshell.mkShell { packages = mkShellPkgs python3-cuda; };
           shell-mkl = wrapBlas pkgs.mkl;
+          shell-rocm = devshell.mkShell { packages = mkShellPkgs python3-rocm; };
         }
       );
     };
