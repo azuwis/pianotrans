@@ -7,6 +7,8 @@ on:
     - 'screenshots/**'
     - 'windows/**'
   push:
+    branches-ignore:
+    - dependabot/**
     paths-ignore:
     - '**.md'
     - 'screenshots/**'
